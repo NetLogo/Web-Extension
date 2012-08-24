@@ -39,7 +39,11 @@ private class RemoteExporter(dest: String) extends StreamHandler {
 
   def apply(hook: (Streamer) => Unit) {
     val exportText = hookInForText(hook)
-    val myPostKVs  = Map(ExportKey -> Option(exportText))
+    val myFormat   =
+"""
+{"nodeId":"node_0.jn","visitEndTime":1345775000000,"hintStates":[],"nodeStates":[{"response":"some crap"}],"visitStartTime":1345774000000,"nodeType":"JnlpNode","visitPostTime":null}
+"""//.format(exportText)
+    val myPostKVs  = Map(ExportKey -> Option(myFormat))
     val allPostKVs = (myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) }
     HttpHandler.httpPost(allPostKVs, dest)
   }
