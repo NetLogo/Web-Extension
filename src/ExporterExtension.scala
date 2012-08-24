@@ -35,7 +35,7 @@ private class RemoteExporter(dest: String) extends StreamHandler {
 
   import java.io.ByteArrayOutputStream
 
-  private val ExportKey = "netlogo_export"
+  private val ExportKey = "data"
 
   def apply(hook: (Streamer) => Unit) {
     val exportText = hookInForText(hook)
