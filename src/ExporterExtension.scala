@@ -45,7 +45,7 @@ private class RemoteExporter(dest: String) extends StreamHandler {
 """//.format(exportText)
     val myPostKVs  = Map(ExportKey -> Option(myFormat))
     val allPostKVs = (myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) }
-    HttpHandler.httpPost(allPostKVs, dest) match { case x => println(x); x }
+    HttpHandler.httpPost(allPostKVs, dest) match { case x => println(x); System.err.println(x); System.out.println(x); Console.println(x); x }
   }
 
   protected def hookInForText(hook: (Streamer) => Unit) : String = {
