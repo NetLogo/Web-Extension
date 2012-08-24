@@ -118,9 +118,9 @@ sealed trait WebIntegration {
 
 trait WISEIntegration extends WebIntegration {
 
-  private val PeriodIDKey    = "period_id"
-  private val RunIDKey       = "run_id"
-  private val WorkgroupIDKey = "workgroup_id"
+  private val PeriodIDKey    = "periodId"
+  private val RunIDKey       = "runId"
+  private val WorkgroupIDKey = "workgroupId"
 
   private val PeriodIDProp    = "wise.period_id"
   private val RunIDProp       = "wise.run_id"
