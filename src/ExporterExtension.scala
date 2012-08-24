@@ -65,7 +65,7 @@ private[exporter] object HttpHandler {
   private val DefaultByteEncoding = "ISO-8859-1"
   private val DestProp            = "netlogo.export_destination"
 
-  protected val httpClient = new org.apache.http.impl.client.DefaultHttpClient
+  protected def httpClient = new org.apache.http.impl.client.DefaultHttpClient
 
   def httpPost(postKVs: Map[String, String], dest: String, encoding: String = DefaultByteEncoding): String = {
     import collection.JavaConverters.seqAsJavaListConverter
