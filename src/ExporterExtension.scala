@@ -4,9 +4,7 @@ import java.io.PrintWriter
 import java.nio.charset.Charset
 
 import org.nlogo.nvm.ExtensionContext
-import org.nlogo.api.{Argument, Context, DefaultClassManager, DefaultCommand, PrimitiveManager, Syntax}
-import org.apache.http.impl.client.BasicCookieStore
-import org.apache.http.impl.cookie.BasicClientCookie
+import org.nlogo.api.{ Argument, Context, DefaultClassManager, DefaultCommand, PrimitiveManager, Syntax }
 
 class ExporterExtension extends DefaultClassManager {
   def load(primitiveManager: PrimitiveManager) {
@@ -49,45 +47,61 @@ private class RemoteExporter(dest: String) extends StreamHandler {
     val allPostKVs = (myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) }
     val destOpt = Option(if (!dest.isEmpty) dest else System.getProperty("netlogo.export_destination"))
     val destination = destOpt getOrElse(throw new IllegalStateException("No valid destination given!"))
-    HttpHandler.httpPost(allPostKVs, destination, Option(System.getProperty("wise.cookie"))) match { case x => println(x); x }
+    HttpHandler.httpPost(allPostKVs, destination, Option(System.getProperty("wise.cookie")))
   }
 
   protected def hookInForText(hook: (Streamer) => Unit) : String = {
 
     val outputStream = new ByteArrayOutputStream()
-    EventEvaluator(outputStream, hook)
 
-    try     { outputStream.toString("UTF-8") }
-    catch   { case ex => System.err.println("An error has occurred in hooking/exporting: " + ex.getMessage); "" }
-    finally { outputStream.close() }
+    try {
+      EventEvaluator(outputStream, hook)
+      outputStream.toString("UTF-8")
+    }
+    catch {
+      case ex: java.io.UnsupportedEncodingException =>
+        System.err.println("Unable to convert hooked text to desired encoding: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
+        ""
+      case ex: Exception =>
+        System.err.println("Unknown error on hooking/exporting: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
+        ""
+    }
+    finally {
+      outputStream.close()
+    }
 
   }
 
 }
 
-private[exporter] object HttpHandler {
+private object HttpHandler {
 
-  import org.apache.http.{ HttpResponse, client, message }
+  import java.net.URL
+
+  import org.apache.http.{ HttpResponse, client, impl, message }
+  import impl.client.DefaultHttpClient
   import message.{ BasicNameValuePair => KVPair }
   import client.entity.{ UrlEncodedFormEntity => URLEntity }, client.methods.HttpPost
 
   private val DefaultByteEncoding = "UTF-8"
 
-  protected def httpClient = new org.apache.http.impl.client.DefaultHttpClient
+  protected def generateClient = new DefaultHttpClient
 
   def httpPost(postKVs: Map[String, String], dest: String,
                cookieValue: Option[String] = None, encoding: String = DefaultByteEncoding): String = {
 
     import collection.JavaConverters.seqAsJavaListConverter
 
-    val post = new HttpPost(new java.net.URL(dest).toURI)
+    val client = generateClient
+
+    val post = new HttpPost(new URL(dest).toURI)
     val javaKVs = (postKVs map { case (key, value) => new KVPair(key, value) } toSeq).asJava
     post.setEntity(new URLEntity(javaKVs, Charset.forName(encoding)))
 
     // Many, many "official" cookie-insertion approaches were tried; all failed --JAB (9/5/12)
     cookieValue foreach (cookie => post.setHeader("COOKIE", "JSESSIONID=" + cookie))
 
-    readResponse(httpClient.execute(post))
+    readResponse(client.execute(post))
 
   }
 
