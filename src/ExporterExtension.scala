@@ -13,7 +13,7 @@ class ExporterExtension extends DefaultClassManager {
 }
 
 class Exporter extends DefaultCommand with StreamHandler {
-  override def getSyntax = Syntax.commandSyntax(Array(Syntax.StringType | Syntax.OptionalType))
+  override def getSyntax = Syntax.commandSyntax(Array(Syntax.StringType))
   override def getAgentClassString = "O"
   override def perform(args: Array[Argument], context: Context) {
     context match {
