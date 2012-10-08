@@ -13,13 +13,13 @@ class ExporterExtension extends DefaultClassManager {
 }
 
 class Exporter extends DefaultCommand with StreamHandler {
-  override def getSyntax = Syntax.commandSyntax(Array(Syntax.StringType))
+  override def getSyntax = Syntax.commandSyntax(Array(Syntax.StringType | Syntax.OptionalType))
   override def getAgentClassString = "O"
   override def perform(args: Array[Argument], context: Context) {
     context match {
       case extContext: ExtensionContext =>
-        val exporter = new RemoteExporter(args(0).getString) with WISEIntegration
-        exporter{(stream: java.io.OutputStream) =>
+        val exporter = new RemoteExporter(Option(args(0).getString) getOrElse "") with WISEIntegration
+        exporter {(stream: java.io.OutputStream) =>
           val writer = new PrintWriter(stream)
           try     extContext.workspace.exportWorld(writer)
           finally writer.close()
@@ -38,14 +38,10 @@ private class RemoteExporter(dest: String) extends StreamHandler {
   private val ExportKey = "data"
 
   def apply(hook: (Streamer) => Unit) {
-    val exportText = hookInForText(hook)
-//    val myFormat   = """
-//{"nodeId":"node_0.jn","visitEndTime":1345775000000,"hintStates":[],"nodeStates":[{"response":"some crap"}],"visitStartTime":1345774000000,"nodeType":"JnlpNode","visitPostTime":null}
-//""".format(exportText)
-//    val myPostKVs  = Map(ExportKey -> Option(myFormat))
-    val myPostKVs = Map(ExportKey -> Option(exportText))
-    val allPostKVs = (myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) }
-    val destOpt = Option(if (!dest.isEmpty) dest else System.getProperty("netlogo.export_destination"))
+    val exportText  = hookInForText(hook)
+    val myPostKVs   = Map(ExportKey -> Option(constructData(exportText)))
+    val allPostKVs  = (myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) }
+    val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty("netlogo.export_destination"))
     val destination = destOpt getOrElse(throw new IllegalStateException("No valid destination given!"))
     HttpHandler.httpPost(allPostKVs, destination, Option(System.getProperty("wise.cookie")))
   }
@@ -143,8 +139,9 @@ sealed trait StreamHandler {
 }
 
 sealed trait WebIntegration {
-  protected def kvAdditionsMap        = Map[String, Option[String]]()
-  protected def getProp(prop: String) = Option(System.getProperty(prop))
+  protected def kvAdditionsMap                 = Map[String, Option[String]]()
+  protected def getProp(prop: String)          = Option(System.getProperty(prop))
+  protected def constructData(preData: String) = preData
 }
 
 trait WISEIntegration extends WebIntegration {
@@ -156,6 +153,16 @@ trait WISEIntegration extends WebIntegration {
   private val PeriodIDProp    = "wise.period_id"
   private val RunIDProp       = "wise.run_id"
   private val WorkgroupIDProp = "wise.workgroup_id"
+
+  override protected def constructData(preData: String) = """
+                                                            |{"nodeId":"node_0.jn",
+                                                            |"visitEndTime":1345775000000,
+                                                            |"hintStates":[],
+                                                            |"nodeStates":[{"response":"%s"}],
+                                                            |"visitStartTime":1345774000000,
+                                                            |"nodeType":"JnlpNode",
+                                                            |"visitPostTime":null}
+                                                          """.format(preData)
 
   protected override val kvAdditionsMap = Map(
     PeriodIDKey    -> getProp(PeriodIDProp),
