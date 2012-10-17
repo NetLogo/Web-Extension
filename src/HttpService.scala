@@ -1,4 +1,4 @@
-package org.nlogo.extensions.exporter
+package org.nlogo.extensions.web
 
 import java.net.URL
 import java.nio.charset.Charset

@@ -1,4 +1,4 @@
-package org.nlogo.extensions.exporter
+package org.nlogo.extensions.web
 
 import java.io.PrintWriter
 
@@ -7,7 +7,7 @@ import org.nlogo.api.{ Argument, Context, DefaultClassManager, DefaultCommand, P
 
 //@ Add ability to read a file by passed-in Java property
 //@ Add ability to directly read file from a stringed URL
-class ExporterExtension extends DefaultClassManager {
+class WebExtension extends DefaultClassManager {
   def load(primitiveManager: PrimitiveManager) {
     primitiveManager.addPrimitive("export-world", new ExportWorld())
   }

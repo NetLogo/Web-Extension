@@ -1,4 +1,4 @@
 Manifest-Version: 1.0
-Extension-Name: exporter
-Class-Manager: org.nlogo.extensions.exporter.ExporterExtension
+Extension-Name: web
+Class-Manager: org.nlogo.extensions.web.WebExtension
 NetLogo-Extension-API-Version: 5.0

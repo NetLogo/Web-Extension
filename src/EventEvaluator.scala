@@ -1,4 +1,4 @@
-package org.nlogo.extensions.exporter
+package org.nlogo.extensions.web
 
 /**
  * Created with IntelliJ IDEA.

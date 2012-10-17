@@ -14,7 +14,7 @@ else
 endif
 
 SRCS=$(wildcard src/*.scala)
-EXT_NAME=exporter
+EXT_NAME=web
 
 HTTP_CLIENT_NAME=httpclient-4.2
 HTTP_CLIENT_JAR=$(HTTP_CLIENT_NAME).jar
