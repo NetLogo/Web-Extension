@@ -13,7 +13,7 @@ else
   COLON=:
 endif
 
-SRCS=$(wildcard src/*.scala)
+SRCS=$(shell find src -type f -name '*.scala')
 EXT_NAME=web
 
 HTTP_CLIENT_NAME=httpclient-4.2

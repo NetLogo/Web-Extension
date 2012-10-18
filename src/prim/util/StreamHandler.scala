@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web
+package org.nlogo.extensions.web.prim.util
 
 /**
  * Created with IntelliJ IDEA.

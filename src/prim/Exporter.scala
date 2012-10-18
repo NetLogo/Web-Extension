@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web
+package org.nlogo.extensions.web.prim
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,13 +18,13 @@ trait Exporter {
 
   protected def exportKey = "data"
 
-  def export(dest: String) {
+  def export(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) {
     val exportText  = generateExportStr
     val myPostKVs   = Map(exportKey -> Option(constructData(exportText)))
-    val allPostKVs  = (myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) }
+    val allPostKVs  = params ++ ((myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) })
     val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))
     val destination = destOpt getOrElse(throw new IllegalStateException("No valid destination given!"))
-    HttpService.post(allPostKVs, destination, Option(System.getProperty(CookiePropKey)))
+    http.RequestSender(destination, httpMethod, allPostKVs, Option(System.getProperty(CookiePropKey)))
   }
 
 }

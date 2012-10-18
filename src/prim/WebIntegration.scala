@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web
+package org.nlogo.extensions.web.prim
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,5 +33,4 @@ trait WISEIntegration extends WebIntegration {
   )
 
 }
-
 
