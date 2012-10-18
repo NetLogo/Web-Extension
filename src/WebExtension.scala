@@ -7,6 +7,9 @@ import org.nlogo.api.{ Argument, Context, DefaultClassManager, DefaultCommand, P
 
 //@ Add ability to read a file by passed-in Java property
 //@ Add ability to directly read file from a stringed URL
+//@ Prims can take optional HTTP type (GET, POST, etc.)
+//@ Prims can take optional KV map
+//@ Should be able to set property to determine which `WebIntegration` to use for the whole life of the run
 class WebExtension extends DefaultClassManager {
   def load(primitiveManager: PrimitiveManager) {
     primitiveManager.addPrimitive("export-world", new ExportWorld())
@@ -36,7 +39,7 @@ class ExportWorld extends DefaultCommand with StreamHandler {
 
     self: WebIntegration =>
 
-    import java.io.ByteArrayOutputStream
+    import java.io.{ ByteArrayOutputStream, UnsupportedEncodingException }
 
     private val DefaultByteEncoding = "UTF-8"
 
@@ -49,7 +52,7 @@ class ExportWorld extends DefaultCommand with StreamHandler {
         outputStream.toString(DefaultByteEncoding)
       }
       catch {
-        case ex: java.io.UnsupportedEncodingException =>
+        case ex: UnsupportedEncodingException =>
           System.err.println("Unable to convert hooked text to desired encoding: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
           ""
         case ex: Exception =>
