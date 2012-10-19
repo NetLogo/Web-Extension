@@ -70,6 +70,16 @@ trait CommonWebPrimitive {
     }
 }
 
+trait SimpleWebPrimitive {
+  self: WebPrimitive =>
+    override protected type ArgsTuple      = (String)
+    override protected def  primArgsSyntax = Array(StringType)
+    override protected def processArguments(args: Array[Argument]) : ArgsTuple = {
+      val dest = args(0).getString
+      (dest)
+    }
+}
+
 abstract class WebCommand extends DefaultCommand with WebPrimitive {
   override def getSyntax = commandSyntax(primArgsSyntax)
 }

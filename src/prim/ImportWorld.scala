@@ -1,6 +1,6 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context, Syntax }, Syntax._
+import org.nlogo.api.{ Argument, Context }
 import org.nlogo.nvm.ExtensionContext
 
 
@@ -12,16 +12,7 @@ import org.nlogo.nvm.ExtensionContext
  */
 
 // A simpler, more-typical syntax for going an `import-world`, which has no need to use any non-standard library
-object ImportWorld extends WebCommand {
-
-  override protected type ArgsTuple      = (String)
-  override protected def  primArgsSyntax = Array(StringType)
-
-  override protected def processArguments(args: Array[Argument]) : ArgsTuple = {
-    val dest = args(0).getString
-    (dest)
-  }
-
+object ImportWorld extends WebCommand with SimpleWebPrimitive {
   def perform(args: Array[Argument], context: Context) {
     context match {
       case extContext: ExtensionContext =>
@@ -31,6 +22,5 @@ object ImportWorld extends WebCommand {
       case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
     }
   }
-
 }
 
