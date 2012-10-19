@@ -2,7 +2,7 @@ package org.nlogo.extensions.web.prim
 
 import java.io.PrintWriter
 
-import org.nlogo.api.{ExtensionException, Argument, Context, Syntax}
+import org.nlogo.api.{ ExtensionException, Argument, Context, Syntax }
 import org.nlogo.nvm.ExtensionContext
 
 import util.{ EventEvaluator, StreamHandler }
