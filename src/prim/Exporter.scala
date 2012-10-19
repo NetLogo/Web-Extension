@@ -18,7 +18,7 @@ trait Exporter {
 
   protected def exportKey = "data"
 
-  def export(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) {
+  def export(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (String, String) = {
     val exportText  = generateExportStr
     val myPostKVs   = Map(exportKey -> Option(constructData(exportText)))
     val allPostKVs  = params ++ ((myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) })

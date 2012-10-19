@@ -18,7 +18,7 @@ object RequestSender {
   protected def generateClient = new DefaultHttpClient
 
   def apply(dest: String, method: RequestMethod, paramMap: Map[String, String],
-            cookieValue: Option[String] = None, encoding: String = DefaultByteEncoding) : String = {
+            cookieValue: Option[String] = None, encoding: String = DefaultByteEncoding) : (String, String) = {
 
     val request = ToApacheConverter(method)
     request.setURI(new URL(dest).toURI)
@@ -43,8 +43,8 @@ object RequestSender {
 
   }
 
-  protected def readResponse(response: HttpResponse) =
-    response.getStatusLine + ":\n" + io.Source.fromInputStream(response.getEntity.getContent).mkString.trim
+  protected def readResponse(response: HttpResponse) : (String, String) =
+    (io.Source.fromInputStream(response.getEntity.getContent).mkString.trim, response.getStatusLine.toString)
 
 }
 

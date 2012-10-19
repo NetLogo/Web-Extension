@@ -9,7 +9,7 @@ import org.nlogo.api.{ ExtensionException, Argument, Context, Syntax }
  * Time: 1:32 PM
  */
 
-object MakeRequest extends WebCommand {
+object MakeRequest extends WebReporter {
 
   import Syntax._
 
@@ -17,9 +17,9 @@ object MakeRequest extends WebCommand {
   override protected val  defaultMap = Map[String, String]()
 
   // Syntax: <prim> destination http_request_method parameter_map
-  override def getSyntax = commandSyntax(Array(StringType, StringType, ListType))
-  override def perform(args: Array[Argument], context: Context) {
-
+  override def getSyntax = reporterSyntax(Array(StringType, StringType, ListType), ListType)
+  override def report(args: Array[Argument], context: Context) : AnyRef = {
+     null
   }
 
   override protected def processArguments(args: Array[Argument]) : ArgsTuple = {

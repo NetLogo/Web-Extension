@@ -2,7 +2,7 @@ package org.nlogo.extensions.web.prim
 
 import java.io.PrintWriter
 
-import org.nlogo.api.{ ExtensionException, Argument, Context, Syntax }
+import org.nlogo.api.{ Argument, Context, ExtensionException, LogoList, Syntax }
 import org.nlogo.nvm.ExtensionContext
 
 import util.{ EventEvaluator, StreamHandler }
@@ -15,7 +15,7 @@ import util.{ EventEvaluator, StreamHandler }
  */
 
 // Hooks in and sends an `export-world` to a remote location
-object ExportWorld extends WebCommand with StreamHandler {
+object ExportWorld extends WebReporter with StreamHandler {
 
   import Syntax._
 
@@ -23,8 +23,8 @@ object ExportWorld extends WebCommand with StreamHandler {
   override protected val  defaultMap = Map[String, String]()
 
   // Syntax: <prim> destination http_request_method parameter_map
-  override def getSyntax = commandSyntax(Array(StringType, StringType, ListType))
-  override def perform(args: Array[Argument], context: Context) {
+  override def getSyntax = reporterSyntax(Array(StringType, StringType, ListType), ListType)
+  override def report(args: Array[Argument], context: Context) : AnyRef = {
     context match {
       case extContext: ExtensionContext =>
         val hook = {
@@ -35,7 +35,8 @@ object ExportWorld extends WebCommand with StreamHandler {
         }
         val (dest, requestMethod, paramMap) = processArguments(args)
         val exporter = new WorldExporter(hook) with WISEIntegration
-        exporter.export(dest, requestMethod, paramMap)
+        val (response, statusCode) = exporter.export(dest, requestMethod, paramMap)
+        LogoList(response, statusCode)
       case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
     }
   }
