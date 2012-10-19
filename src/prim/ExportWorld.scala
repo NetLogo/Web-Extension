@@ -34,7 +34,7 @@ object ExportWorld extends WebReporter with StreamHandler {
     }
   }
 
-  class WorldExporter(hook: (Streamer) => Unit) extends Requester {
+  private class WorldExporter(hook: (Streamer) => Unit) extends Requester {
 
     self: WebIntegration =>
 

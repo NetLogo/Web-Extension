@@ -30,7 +30,7 @@ object ImportWorldFine extends WebCommand {
     }
   }
 
-  class WorldImporter(hook: String => Unit) extends Requester {
+  private class WorldImporter(hook: String => Unit) extends Requester {
     self: WebIntegration =>
     override def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (String, String) = {
       val (response, statusCode) = super.apply(dest, httpMethod, params)
