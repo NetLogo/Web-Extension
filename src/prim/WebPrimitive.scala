@@ -56,6 +56,8 @@ sealed trait WebPrimitive {
     }
   }
 
+  protected def isToString(is: java.io.InputStream) = io.Source.fromInputStream(is).mkString.trim
+
 }
 
 trait CommonWebPrimitive {

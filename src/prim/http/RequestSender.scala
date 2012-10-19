@@ -1,5 +1,6 @@
 package org.nlogo.extensions.web.prim.http
 
+import java.io.InputStream
 import java.net.URL
 
 import org.apache.http.{ HttpResponse, impl }, impl.client.DefaultHttpClient
@@ -18,7 +19,7 @@ object RequestSender {
   protected def generateClient = new DefaultHttpClient
 
   def apply(dest: String, method: RequestMethod, paramMap: Map[String, String],
-            cookieValue: Option[String] = None, encoding: String = DefaultByteEncoding) : (String, String) = {
+            cookieValue: Option[String] = None, encoding: String = DefaultByteEncoding) : (InputStream, String) = {
 
     val request = ToApacheConverter(method)
     request.setURI(new URL(dest).toURI)
@@ -27,11 +28,12 @@ object RequestSender {
     // Many, many "official" cookie-insertion approaches were tried; all failed --JAB (9/5/12)
     cookieValue foreach (cookie => request.setHeader("COOKIE", "JSESSIONID=" + cookie))
 
-    try {
-      val response = readResponse(generateClient.execute(request))
-      Option(System.getProperty("netlogo.web.debugging")) foreach (_ => println(response))
-      response
+    generateClient.execute(request)
 
+    try {
+      val (responseStream, statusCode) = prepareResponse(generateClient.execute(request))
+      Option(System.getProperty("netlogo.web.debugging")) foreach (_ => println(responseStream))
+      (responseStream, statusCode)
     }
     catch {
       case ex: java.net.SocketException =>
@@ -43,8 +45,8 @@ object RequestSender {
 
   }
 
-  protected def readResponse(response: HttpResponse) : (String, String) =
-    (io.Source.fromInputStream(response.getEntity.getContent).mkString.trim, response.getStatusLine.toString)
+  protected def prepareResponse(response: HttpResponse) : (InputStream, String) =
+    (response.getEntity.getContent, response.getStatusLine.toString)
 
 }
 

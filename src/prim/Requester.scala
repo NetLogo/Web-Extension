@@ -1,5 +1,7 @@
 package org.nlogo.extensions.web.prim
 
+import java.io.InputStream
+
 /**
  * Created with IntelliJ IDEA.
  * User: Jason
@@ -18,7 +20,7 @@ trait Requester {
 
   protected def exportKey = "data"
 
-  def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (String, String) = {
+  def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (InputStream, String) = {
     val myPostKVs   = Map() ++ (generateAddedExportData map (str => Map(exportKey -> Option(constructData(str)))) getOrElse Map())
     val allPostKVs  = params ++ ((myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) })
     val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))
