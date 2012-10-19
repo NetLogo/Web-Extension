@@ -9,7 +9,7 @@ import org.nlogo.api.{ ExtensionException, Argument, Context, Syntax }
  * Time: 1:32 PM
  */
 
-class MakeRequest extends WebCommand {
+object MakeRequest extends WebCommand {
 
   import Syntax._
 

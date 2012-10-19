@@ -15,7 +15,7 @@ import util.{ EventEvaluator, StreamHandler }
  */
 
 // Hooks in and sends an `export-world` to a remote location
-class ExportWorld extends WebCommand with StreamHandler {
+object ExportWorld extends WebCommand with StreamHandler {
 
   import Syntax._
 
