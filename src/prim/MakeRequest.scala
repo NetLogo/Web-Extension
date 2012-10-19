@@ -9,7 +9,6 @@ import org.nlogo.api.{ Argument, Context }
  * Time: 1:32 PM
  */
 
-// Syntax: <prim> destination http_request_method parameter_map
 object MakeRequest extends WebReporter {
   override def report(args: Array[Argument], context: Context) : AnyRef = {
     ((new Exporter with SimpleWebIntegration).export _).tupled((processArguments(args)))

@@ -17,7 +17,6 @@ import util.{ EventEvaluator, StreamHandler }
 // Hooks in and sends an `export-world` to a remote location
 object ExportWorld extends WebReporter with StreamHandler {
 
-  // Syntax: <prim> destination http_request_method parameter_map
   override def report(args: Array[Argument], context: Context) : AnyRef = {
     context match {
       case extContext: ExtensionContext =>
