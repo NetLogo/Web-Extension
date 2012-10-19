@@ -56,21 +56,21 @@ object ExportWorld extends WebReporter with StreamHandler {
 
     private val DefaultByteEncoding = "UTF-8"
 
-    override protected def generateExportStr = {
+    override protected def generateAddedExportData = {
 
       val outputStream = new ByteArrayOutputStream()
 
       try {
         EventEvaluator(outputStream, hook)
-        outputStream.toString(DefaultByteEncoding)
+        Option(outputStream.toString(DefaultByteEncoding))
       }
       catch {
         case ex: UnsupportedEncodingException =>
           System.err.println("Unable to convert hooked text to desired encoding: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
-          ""
+          None
         case ex: Exception =>
           System.err.println("Unknown error on hooking/exporting: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
-          ""
+          None
       }
       finally {
         outputStream.close()
