@@ -2,7 +2,7 @@ package org.nlogo.extensions.web.prim
 
 import java.io.PrintWriter
 
-import org.nlogo.api.{ Argument, Context, ExtensionException, LogoList, Syntax }
+import org.nlogo.api.{ Argument, Context, LogoList }
 import org.nlogo.nvm.ExtensionContext
 
 import util.{ EventEvaluator, StreamHandler }
@@ -16,8 +16,6 @@ import util.{ EventEvaluator, StreamHandler }
 
 // Hooks in and sends an `export-world` to a remote location
 object ExportWorld extends WebReporter with StreamHandler {
-
-  import Syntax._
 
   // Syntax: <prim> destination http_request_method parameter_map
   override def report(args: Array[Argument], context: Context) : AnyRef = {
