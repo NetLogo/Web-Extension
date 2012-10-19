@@ -21,7 +21,7 @@ object ExportWorld extends WebReporter with StreamHandler {
     context match {
       case extContext: ExtensionContext =>
         val hook = {
-          (stream: java.io.OutputStream) =>
+          (stream: Streamer) =>
             val writer = new PrintWriter(stream)
             try     extContext.workspace.exportWorld(writer)
             finally writer.close()
