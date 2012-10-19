@@ -7,7 +7,7 @@ package org.nlogo.extensions.web.prim.util
  * Time: 1:12 PM
  */
 
-object EventEvaluator extends StreamHandler {
+object EventEvaluator {
 
   import actors.Actor
 
@@ -29,7 +29,7 @@ object EventEvaluator extends StreamHandler {
     }
   }
 
-  def apply(stream: Streamer, hook: (Streamer) => Unit) {
+  def apply[T](stream: T, hook: (T) => Unit) {
     ((new EventEvaluationActor(stream, hook)).start() !! Start)()
   }
 
