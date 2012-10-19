@@ -15,7 +15,7 @@ import util.{ EventEvaluator, StreamHandler }
  */
 
 // Hooks in and sends an `export-world` to a remote location
-object ExportWorld extends WebReporter with StreamHandler {
+object ExportWorld extends WebReporter with CommonWebPrimitive with StreamHandler {
 
   override def report(args: Array[Argument], context: Context) : AnyRef = {
     context match {

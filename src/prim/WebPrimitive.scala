@@ -1,7 +1,6 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, ExtensionException, LogoList, Primitive, Syntax }
-import Syntax._
+import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, ExtensionException, LogoList, Primitive, Syntax }, Syntax._
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,16 +15,11 @@ sealed trait WebPrimitive {
 
   override def getAgentClassString = "O---"
 
-  protected type ArgsTuple      = (String, http.RequestMethod, Map[String, String])
-  protected def  primArgsSyntax = Array(StringType, StringType, ListType)
-  protected def  defaultMap     = Map[String, String]()
+  protected type ArgsTuple
+  protected def  primArgsSyntax: Array[Int]
+  protected def  processArguments(args: Array[Argument]) : ArgsTuple
 
-  protected def processArguments(args: Array[Argument]) : ArgsTuple = {
-    val dest      = args(0).getString
-    val reqMethod = httpMethodify(args(1)) getOrElse (throw new ExtensionException("Invalid HTTP method name supplied."))
-    val params    =      paramify(args(2)) getOrElse defaultMap
-    (dest, reqMethod, params)
-  }
+  protected def defaultMap = Map[String, String]()
 
   protected def paramify(arg: Argument)      = getList(arg) map listToParams
   protected def getList(arg: Argument)       = try { Option(arg.getList) } catch { case ex: Exception => None }
@@ -62,6 +56,18 @@ sealed trait WebPrimitive {
     }
   }
 
+}
+
+trait CommonWebPrimitive {
+  self: WebPrimitive =>
+    override protected type ArgsTuple      = (String, http.RequestMethod, Map[String, String])
+    override protected def  primArgsSyntax = Array(StringType, StringType, ListType)
+    override protected def processArguments(args: Array[Argument]) : ArgsTuple = {
+      val dest      = args(0).getString
+      val reqMethod = httpMethodify(args(1)) getOrElse (throw new ExtensionException("Invalid HTTP method name supplied."))
+      val params    =      paramify(args(2)) getOrElse defaultMap
+      (dest, reqMethod, params)
+    }
 }
 
 abstract class WebCommand extends DefaultCommand with WebPrimitive {

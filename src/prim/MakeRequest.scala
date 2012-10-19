@@ -9,7 +9,7 @@ import org.nlogo.api.{ Argument, Context, LogoList }
  * Time: 1:32 PM
  */
 
-object MakeRequest extends WebReporter {
+object MakeRequest extends WebReporter with CommonWebPrimitive {
   override def report(args: Array[Argument], context: Context) : AnyRef = {
     ((new Requester with SimpleWebIntegration).apply _).tupled((processArguments(args))) match { case (a, b) => LogoList(a, b) }
   }

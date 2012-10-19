@@ -13,7 +13,7 @@ import util.EventEvaluator
  * Time: 2:47 PM
  */
 
-object ImportWorldFine extends WebCommand {
+object ImportWorldFine extends WebCommand with CommonWebPrimitive {
 
   def perform(args: Array[Argument], context: Context) {
     context match {
