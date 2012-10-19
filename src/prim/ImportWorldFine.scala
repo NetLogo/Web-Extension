@@ -13,7 +13,7 @@ import util.EventEvaluator
  * Time: 2:47 PM
  */
 
-object ImportWorld extends WebCommand {
+object ImportWorldFine extends WebCommand {
 
   def perform(args: Array[Argument], context: Context) {
     context match {
@@ -32,11 +32,13 @@ object ImportWorld extends WebCommand {
 
   class WorldImporter(hook: String => Unit) extends Requester {
     self: WebIntegration =>
-      override def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (String, String) = {
-        val (response, statusCode) = super.apply(dest, httpMethod, params)
-        EventEvaluator(response, hook)
-        (response, statusCode)
-      }
+    override def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (String, String) = {
+      val (response, statusCode) = super.apply(dest, httpMethod, params)
+      EventEvaluator(response, hook)
+      (response, statusCode)
+    }
   }
 
 }
+
+
