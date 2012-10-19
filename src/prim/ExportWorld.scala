@@ -19,11 +19,7 @@ object ExportWorld extends WebReporter with StreamHandler {
 
   import Syntax._
 
-  override protected type ArgsTuple  = (String, http.RequestMethod, Map[String, String])
-  override protected val  defaultMap = Map[String, String]()
-
   // Syntax: <prim> destination http_request_method parameter_map
-  override def getSyntax = reporterSyntax(Array(StringType, StringType, ListType), ListType)
   override def report(args: Array[Argument], context: Context) : AnyRef = {
     context match {
       case extContext: ExtensionContext =>
@@ -39,13 +35,6 @@ object ExportWorld extends WebReporter with StreamHandler {
         LogoList(response, statusCode)
       case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
     }
-  }
-
-  override protected def processArguments(args: Array[Argument]) : ArgsTuple = {
-    val dest      = args(0).getString
-    val reqMethod = httpMethodify(args(1)) getOrElse (throw new ExtensionException("Invalid HTTP method name supplied."))
-    val params    =      paramify(args(2)) getOrElse defaultMap
-    (dest, reqMethod, params)
   }
 
   class WorldExporter(hook: (Streamer) => Unit) extends Exporter {

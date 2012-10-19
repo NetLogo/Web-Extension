@@ -13,6 +13,8 @@ sealed trait WebIntegration {
   protected def constructData(preData: String) = preData
 }
 
+trait SimpleWebIntegration extends WebIntegration
+
 trait WISEIntegration extends WebIntegration {
 
   private val PeriodIDKey    = "periodId"
