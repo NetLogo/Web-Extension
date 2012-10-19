@@ -7,7 +7,7 @@ package org.nlogo.extensions.web.prim
  * Time: 1:09 PM
  */
 
-trait Exporter {
+trait Requester {
 
   self: WebIntegration =>
 
@@ -18,7 +18,7 @@ trait Exporter {
 
   protected def exportKey = "data"
 
-  def export(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (String, String) = {
+  def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (String, String) = {
     val myPostKVs   = Map() ++ (generateAddedExportData map (str => Map(exportKey -> Option(constructData(str)))) getOrElse Map())
     val allPostKVs  = params ++ ((myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) })
     val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))

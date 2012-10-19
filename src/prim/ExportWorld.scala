@@ -28,13 +28,13 @@ object ExportWorld extends WebReporter with StreamHandler {
         }
         val (dest, requestMethod, paramMap) = processArguments(args)
         val exporter = new WorldExporter(hook) with WISEIntegration
-        val (response, statusCode) = exporter.export(dest, requestMethod, paramMap)
+        val (response, statusCode) = exporter(dest, requestMethod, paramMap)
         LogoList(response, statusCode)
       case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
     }
   }
 
-  class WorldExporter(hook: (Streamer) => Unit) extends Exporter {
+  class WorldExporter(hook: (Streamer) => Unit) extends Requester {
 
     self: WebIntegration =>
 

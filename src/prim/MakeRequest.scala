@@ -1,6 +1,6 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context }
+import org.nlogo.api.{ Argument, Context, LogoList }
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,6 +11,6 @@ import org.nlogo.api.{ Argument, Context }
 
 object MakeRequest extends WebReporter {
   override def report(args: Array[Argument], context: Context) : AnyRef = {
-    ((new Exporter with SimpleWebIntegration).export _).tupled((processArguments(args)))
+    ((new Requester with SimpleWebIntegration).apply _).tupled((processArguments(args))) match { case (a, b) => LogoList(a, b) }
   }
 }
