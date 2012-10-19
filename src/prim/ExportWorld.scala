@@ -19,8 +19,8 @@ class ExportWorld extends WebCommand with StreamHandler {
 
   import Syntax._
 
-  override protected type ArgsTuple     = (String, http.RequestMethod, Map[String, String])
-  override protected val  defaultMap    = Map[String, String]()
+  override protected type ArgsTuple  = (String, http.RequestMethod, Map[String, String])
+  override protected val  defaultMap = Map[String, String]()
 
   // Syntax: <prim> destination http_request_method parameter_map
   override def getSyntax = commandSyntax(Array(StringType, StringType, ListType))
