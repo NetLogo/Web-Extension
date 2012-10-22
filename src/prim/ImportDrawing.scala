@@ -6,6 +6,8 @@ import org.nlogo.window.GUIWorkspace
 
 import java.net.URL
 
+import util.EnsuranceAgent._
+
 /**
  * Created with IntelliJ IDEA.
  * User: Jason
@@ -14,18 +16,13 @@ import java.net.URL
  */
 
 object ImportDrawing extends WebCommand with SimpleWebPrimitive {
-  def perform(args: Array[Argument], context: Context) {
-    context match {
-      case extContext: ExtensionContext =>
-        extContext.workspace match {
-          case guiWS: GUIWorkspace =>
-            val (dest) = processArguments(args)
-            val is     = new URL(dest).openStream()
-            guiWS.importDrawing(is)
-          case ws => throw new UnsupportedOperationException(
-            "Cannot use this primitive from any type of workspace by a `GUIWorkspace`; you're using a %s.".format(ws.getClass.getName))
-        }
-      case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
+  override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
+    ensuringExtensionContext { (extContext: ExtensionContext) =>
+      ensuringGUIWorkspace(extContext.workspace) { (guiWS: GUIWorkspace) =>
+        val (dest) = processArguments(args)
+        val is     = new URL(dest).openStream()
+        guiWS.importDrawing(is)
+      }
     }
   }
 }

@@ -1,6 +1,6 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, ExtensionException, LogoList, Primitive, Syntax }, Syntax._
+import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, Context, ExtensionException, LogoList, Primitive, Syntax }, Syntax._
 
 /**
  * Created with IntelliJ IDEA.
@@ -82,11 +82,18 @@ trait SimpleWebPrimitive {
     }
 }
 
+import DummyImplicit.dummyImplicit
+
+// Using `DummyImplicit` so that the new and old `perform`/`report` methods have distinct signatures after erasure --JAB (10/22/12)
 abstract class WebCommand extends DefaultCommand with WebPrimitive {
   override def getSyntax = commandSyntax(primArgsSyntax)
+  override def perform(args: Array[Argument], context: Context) { perform(args)(context, dummyImplicit) }
+  /*new!*/ def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit)
 }
 
 abstract class WebReporter extends DefaultReporter with WebPrimitive {
   override def getSyntax = reporterSyntax(primArgsSyntax, ListType)
+  override def report(args: Array[Argument], context: Context) : AnyRef = { report(args)(context, dummyImplicit) }
+  /*new!*/ def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef
 }
 

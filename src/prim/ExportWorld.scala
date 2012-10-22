@@ -5,6 +5,7 @@ import java.io.PrintWriter
 import org.nlogo.api.{ Argument, Context, LogoList }
 import org.nlogo.nvm.ExtensionContext
 
+import util.EnsuranceAgent._
 import util.{ EventEvaluator, StreamHandler }
 
 /**
@@ -17,20 +18,18 @@ import util.{ EventEvaluator, StreamHandler }
 // Hooks in and sends an `export-world` to a remote location
 object ExportWorld extends WebReporter with CommonWebPrimitive with StreamHandler {
 
-  override def report(args: Array[Argument], context: Context) : AnyRef = {
-    context match {
-      case extContext: ExtensionContext =>
-        val hook = {
-          (stream: Streamer) =>
-            val writer = new PrintWriter(stream)
-            try     extContext.workspace.exportWorld(writer)
-            finally writer.close()
-        }
-        val (dest, requestMethod, paramMap) = processArguments(args)
-        val exporter = new WorldExporter(hook) with WISEIntegration
-        val (response, statusCode) = exporter(dest, requestMethod, paramMap)
-        LogoList(isToString(response), statusCode)
-      case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
+  override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
+    ensuringExtensionContext { case extContext: ExtensionContext =>
+      val hook = {
+        (stream: Streamer) =>
+          val writer = new PrintWriter(stream)
+          try     extContext.workspace.exportWorld(writer)
+          finally writer.close()
+      }
+      val (dest, requestMethod, paramMap) = processArguments(args)
+      val exporter = new WorldExporter(hook) with WISEIntegration
+      val (response, statusCode) = exporter(dest, requestMethod, paramMap)
+      LogoList(isToString(response), statusCode)
     }
   }
 

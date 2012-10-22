@@ -5,6 +5,7 @@ import org.nlogo.nvm.ExtensionContext
 
 import java.io.{ InputStream, InputStreamReader }
 
+import util.EnsuranceAgent._
 import util.EventEvaluator
 
 /**
@@ -16,14 +17,12 @@ import util.EventEvaluator
 
 object ImportWorldFine extends WebCommand with CommonWebPrimitive {
 
-  def perform(args: Array[Argument], context: Context) {
-    context match {
-      case extContext: ExtensionContext =>
-        val workspace = extContext.workspace()
-        val hook = (stream: InputStream) => workspace.importWorld(new InputStreamReader(stream))
-        val (dest, requestMethod, paramMap) = processArguments(args)
-        (new WorldImporter(hook) with SimpleWebIntegration)(dest, requestMethod, paramMap)
-      case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
+  override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
+    ensuringExtensionContext { (extContext: ExtensionContext) =>
+      val workspace = extContext.workspace()
+      val hook = (stream: InputStream) => workspace.importWorld(new InputStreamReader(stream))
+      val (dest, requestMethod, paramMap) = processArguments(args)
+      (new WorldImporter(hook) with SimpleWebIntegration)(dest, requestMethod, paramMap)
     }
   }
 

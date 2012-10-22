@@ -3,6 +3,7 @@ package org.nlogo.extensions.web.prim
 import org.nlogo.api.{ Argument, Context }
 import org.nlogo.nvm.ExtensionContext
 
+import util.EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.
@@ -13,13 +14,11 @@ import org.nlogo.nvm.ExtensionContext
 
 // A simpler, more-typical syntax for going an `import-world`, which has no need to use any non-standard library
 object ImportWorld extends WebCommand with SimpleWebPrimitive {
-  def perform(args: Array[Argument], context: Context) {
-    context match {
-      case extContext: ExtensionContext =>
-        val (dest) = processArguments(args)
-        val reader = io.Source.fromURL(dest).reader()
-        extContext.workspace.importWorld(reader)
-      case _ => throw new IllegalArgumentException("Context is not an `ExtensionContext`!  (How did you even manage to pull that off?)")
+  override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
+    ensuringExtensionContext { (extContext: ExtensionContext) =>
+      val (dest) = processArguments(args)
+      val reader = io.Source.fromURL(dest).reader()
+      extContext.workspace.importWorld(reader)
     }
   }
 }

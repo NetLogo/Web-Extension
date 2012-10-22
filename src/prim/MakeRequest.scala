@@ -10,7 +10,7 @@ import org.nlogo.api.{ Argument, Context, LogoList }
  */
 
 object MakeRequest extends WebReporter with CommonWebPrimitive {
-  override def report(args: Array[Argument], context: Context) : AnyRef = {
+  override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ((new Requester with SimpleWebIntegration).apply _).tupled((processArguments(args))) match { case (a, b) => LogoList(isToString(a), b) }
   }
 }
