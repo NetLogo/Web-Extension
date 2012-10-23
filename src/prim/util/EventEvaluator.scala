@@ -40,5 +40,15 @@ object EventEvaluator {
   def apply[T, U](stream: T, hook: (T) => U) : U =
     (generateActor(stream, hook) !! Evaluate)().asInstanceOf[U]
 
+  // This _cannot_ run within an actor; if it does, NetLogo freezes (for some reason)
+  // At least, that's the case with exporting the interface --JAB (10/23/12)
+  def withinWorkspace[T, U](stream: T, hook: (T) => U, workspace: Workspace) : U = {
+    workspace.waitForResult[U] (
+      new ReporterRunnable[U] {
+        override def run() : U = hook(stream)
+      }
+    )
+  }
+
 }
 
