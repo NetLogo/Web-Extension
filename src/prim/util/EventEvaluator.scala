@@ -1,5 +1,10 @@
 package org.nlogo.extensions.web.prim.util
 
+import org.nlogo.api.ReporterRunnable
+import org.nlogo.awt.EventQueue
+import org.nlogo.nvm.Workspace
+import org.nlogo.swing.Implicits
+
 /**
  * Created with IntelliJ IDEA.
  * User: Jason
@@ -11,27 +16,29 @@ object EventEvaluator {
 
   import actors.Actor
 
-  sealed protected trait TempActorProtocol
-  protected object TempActorProtocol {
-    object Start extends TempActorProtocol
+  sealed protected trait EventActorProtocol
+  protected object EventActorProtocol {
+    case object Evaluate extends EventActorProtocol
   }
 
-  import TempActorProtocol.Start
+  import EventActorProtocol._
 
   protected class EventEvaluationActor[T, U](stream: T, func: (T) => U) extends Actor {
-    import org.nlogo.swing.Implicits.thunk2runnable
+    import Implicits.thunk2runnable
     def act() {
       loop {
         react {
-          case Start => org.nlogo.awt.EventQueue.invokeLater{ () => reply(func(stream)); }
+          case Evaluate => EventQueue.invokeLater{ () => reply(func(stream)); }
         }
       }
     }
   }
 
-  def apply[T, U](stream: T, hook: (T) => U) : U = {
-    ((new EventEvaluationActor(stream, hook)).start() !! Start)().asInstanceOf[U]
-  }
+  // The stupid `start` method only returns an `Actor`; can't have a more specific return type --JAB (10/23/12)
+  protected def generateActor[T, U](stream: T, hook: (T) => U) : Actor =new EventEvaluationActor(stream, hook).start()
+
+  def apply[T, U](stream: T, hook: (T) => U) : U =
+    (generateActor(stream, hook) !! Evaluate)().asInstanceOf[U]
 
 }
 
