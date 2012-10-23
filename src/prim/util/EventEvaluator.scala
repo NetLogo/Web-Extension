@@ -18,19 +18,19 @@ object EventEvaluator {
 
   import TempActorProtocol.Start
 
-  protected class EventEvaluationActor[T](stream: T, func: (T) => Unit) extends Actor {
+  protected class EventEvaluationActor[T, U](stream: T, func: (T) => U) extends Actor {
     import org.nlogo.swing.Implicits.thunk2runnable
     def act() {
       loop {
         react {
-          case Start => org.nlogo.awt.EventQueue.invokeLater{ () => func(stream); reply() }
+          case Start => org.nlogo.awt.EventQueue.invokeLater{ () => reply(func(stream)); }
         }
       }
     }
   }
 
-  def apply[T](stream: T, hook: (T) => Unit) {
-    ((new EventEvaluationActor(stream, hook)).start() !! Start)()
+  def apply[T, U](stream: T, hook: (T) => U) : U = {
+    ((new EventEvaluationActor(stream, hook)).start() !! Start)().asInstanceOf[U]
   }
 
 }
