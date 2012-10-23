@@ -4,6 +4,7 @@ import org.nlogo.api.{ Argument, Context, LogoList }
 import org.nlogo.nvm.ExtensionContext
 
 import util.EnsuranceAgent._
+import util.ImageToBase64._
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,20 +15,9 @@ import util.EnsuranceAgent._
 
 object ExportView extends WebReporter with CommonWebPrimitive {
 
-  private val DefaultByteEncoding = "UTF-8"
-  private val DefaultImageFormat  = "png"
-
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val hook = {
-        () =>
-          import java.io.ByteArrayOutputStream, javax.imageio.ImageIO, org.apache.commons.codec.binary.Base64OutputStream
-          val image = extContext.workspace.exportView()
-          val os    = new ByteArrayOutputStream()
-          val os64  = new Base64OutputStream(os)
-          ImageIO.write(image, DefaultImageFormat, os64)
-          os.toString(DefaultByteEncoding)
-      }
+      val hook = () => extContext.workspace.exportView().asBase64
       val (dest, requestMethod, paramMap) = processArguments(args)
       val exporter = new ViewExporter(hook) with SimpleWebIntegration
       val (response, statusCode) = exporter(dest, requestMethod, paramMap)
