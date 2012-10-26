@@ -16,7 +16,10 @@ import util.{ EventEvaluator, StreamHandler }
  */
 
 // Hooks in and sends an `export-world` to a remote location
-object ExportWorld extends WebReporter with CommonWebPrimitive with StreamHandler {
+object ExportWorld extends WebReporter with CommonWebPrimitive with StreamHandler with RequesterGenerator {
+
+  override protected type RequesterCons     = ((Streamer) => Unit)
+  override protected def  generateRequester = (hook: (Streamer) => Unit) => new WorldExporter(hook) with Integration
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { case extContext: ExtensionContext =>
@@ -27,13 +30,13 @@ object ExportWorld extends WebReporter with CommonWebPrimitive with StreamHandle
           finally writer.close()
       }
       val (dest, requestMethod, paramMap) = processArguments(args)
-      val exporter = new WorldExporter(hook) with WISEIntegration
+      val exporter = generateRequester(hook)
       val (response, statusCode) = exporter(dest, requestMethod, paramMap)
       LogoList(isToString(response), statusCode)
     }
   }
 
-  private class WorldExporter(hook: (Streamer) => Unit) extends Requester {
+  protected class WorldExporter(hook: (Streamer) => Unit) extends Requester {
 
     self: WebIntegration =>
 

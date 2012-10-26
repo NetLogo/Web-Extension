@@ -16,7 +16,10 @@ import util.ImageToBase64._
  * Time: 3:05 PM
  */
 
-object ExportInterface extends WebReporter with CommonWebPrimitive {
+object ExportInterface extends WebReporter with CommonWebPrimitive with RequesterGenerator {
+
+  override protected type RequesterCons     = ((Unit) => String, Workspace)
+  override protected def  generateRequester = (hookAndWS: ((Unit) => String, Workspace)) => (ViewExporter.apply _).tupled(hookAndWS)
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
@@ -34,15 +37,21 @@ object ExportInterface extends WebReporter with CommonWebPrimitive {
           Images.paintToImage(component).asBase64
       }
       val (dest, requestMethod, paramMap) = processArguments(args)
-      val exporter = new ViewExporter(hook, extContext.workspace) with SimpleWebIntegration
+      val exporter = generateRequester(hook, extContext.workspace)
       val (response, statusCode) = exporter(dest, requestMethod, paramMap)
       LogoList(isToString(response), statusCode)
     }
   }
 
-  private class ViewExporter(hook: (Unit) => String, workspace: Workspace) extends Requester {
+  protected class ViewExporter(hook: (Unit) => String, workspace: Workspace) extends Requester {
     self: WebIntegration =>
       override protected def generateAddedExportData = Option(EventEvaluator.withinWorkspace((), hook, workspace))
+  }
+
+  // Ladies and gentlemen, I will now lead you in performing one weary "Meh...!" for hacks. --JAB
+  // No, seriously, why isn't there better syntactic sugar for partially applying (and tupling) a constructor while mixing in a trait?
+  private object ViewExporter {
+    def apply(hook: (Unit) => String, workspace: Workspace) = new ViewExporter(hook, workspace) with Integration
   }
 
 }

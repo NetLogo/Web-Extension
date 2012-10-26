@@ -13,19 +13,22 @@ import util.ImageToBase64._
  * Time: 1:17 PM
  */
 
-object ExportView extends WebReporter with CommonWebPrimitive {
+object ExportView extends WebReporter with CommonWebPrimitive with RequesterGenerator {
+
+  override protected type RequesterCons     = (() => String)
+  override protected def  generateRequester = (hook: () => String) => new ViewExporter(hook) with Integration
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
       val hook = () => extContext.workspace.exportView().asBase64
       val (dest, requestMethod, paramMap) = processArguments(args)
-      val exporter = new ViewExporter(hook) with SimpleWebIntegration
+      val exporter = generateRequester(hook)
       val (response, statusCode) = exporter(dest, requestMethod, paramMap)
       LogoList(isToString(response), statusCode)
     }
   }
 
-  private class ViewExporter(hook: () => String) extends Requester {
+  protected class ViewExporter(hook: () => String) extends Requester {
     self: WebIntegration =>
       override protected def generateAddedExportData = Some(hook())
   }

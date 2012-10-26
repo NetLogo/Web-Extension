@@ -9,8 +9,10 @@ import org.nlogo.api.{ Argument, Context, LogoList }
  * Time: 1:32 PM
  */
 
-object MakeRequest extends WebReporter with CommonWebPrimitive {
+object MakeRequest extends WebReporter with CommonWebPrimitive with RequesterGenerator {
+  override protected type RequesterCons     = (Unit)
+  override protected def  generateRequester = (_: Unit) => new Requester with Integration
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
-    ((new Requester with SimpleWebIntegration).apply _).tupled((processArguments(args))) match { case (a, b) => LogoList(isToString(a), b) }
+    (generateRequester().apply _).tupled((processArguments(args))) match { case (a, b) => LogoList(isToString(a), b) }
   }
 }
