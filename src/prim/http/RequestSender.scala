@@ -28,8 +28,6 @@ object RequestSender {
     // Many, many "official" cookie-insertion approaches were tried; all failed --JAB (9/5/12)
     cookieValue foreach (cookie => request.setHeader("COOKIE", "JSESSIONID=" + cookie))
 
-    generateClient.execute(request)
-
     try {
       val (responseStream, statusCode) = prepareResponse(generateClient.execute(request))
       Option(System.getProperty("netlogo.web.debugging")) foreach (_ => println(responseStream))
