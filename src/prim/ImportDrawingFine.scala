@@ -13,11 +13,7 @@ import util.EnsuranceAgent._
  * Time: 5:36 PM
  */
 
-object ImportDrawingFine extends WebCommand with CommonWebPrimitive with RequesterGenerator {
-
-  override protected type RequesterCons     = (Unit)
-  override protected def  generateRequester = (_: Unit) => new Requester with Integration
-
+object ImportDrawingFine extends WebCommand with CommonWebPrimitive with SimpleRequesterGenerator {
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
       ensuringGUIWorkspace(extContext.workspace) { (guiWS: GUIWorkspace) =>
