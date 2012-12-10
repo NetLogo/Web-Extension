@@ -15,29 +15,15 @@ import util.EventEvaluator
  * Time: 2:47 PM
  */
 
-object ImportWorldFine extends WebCommand with CommonWebPrimitive with RequesterGenerator {
-
-  override protected type RequesterCons     = (InputStream => Unit)
-  override protected def  generateRequester = (hook: InputStream => Unit) => new WorldImporter(hook) with Integration
-
+object ImportWorldFine extends WebCommand with CommonWebPrimitive with SimpleRequesterGenerator {
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val workspace = extContext.workspace()
-      val hook = (stream: InputStream) => workspace.importWorld(new InputStreamReader(stream))
+      val hook = (stream: InputStream) => extContext.workspace.importWorld(new InputStreamReader(stream))
       val (dest, requestMethod, paramMap) = processArguments(args)
-      generateRequester(hook)(dest, requestMethod, paramMap)
+      val (response, _) = generateRequester(hook)(dest, requestMethod, paramMap)
+      EventEvaluator(response, hook)
     }
   }
-
-  protected class WorldImporter(hook: InputStream => Unit) extends Requester {
-    self: WebIntegration =>
-    override def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (InputStream, String) = {
-      val (responseStream, statusCode) = super.apply(dest, httpMethod, params)
-      EventEvaluator(responseStream, hook)
-      (responseStream, statusCode)
-    }
-  }
-
 }
 
 
