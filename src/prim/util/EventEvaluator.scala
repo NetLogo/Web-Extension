@@ -35,7 +35,7 @@ object EventEvaluator {
   }
 
   // The stupid `start` method only returns an `Actor`; can't have a more specific return type --JAB (10/23/12)
-  protected def generateActor[T, U](stream: T, hook: (T) => U) : Actor =new EventEvaluationActor(stream, hook).start()
+  protected def generateActor[T, U](stream: T, hook: (T) => U) : Actor = new EventEvaluationActor(stream, hook).start()
 
   def apply[T, U](stream: T, hook: (T) => U) : U =
     (generateActor(stream, hook) !! Evaluate)().asInstanceOf[U]
