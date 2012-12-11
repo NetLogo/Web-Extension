@@ -9,7 +9,7 @@ import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, Context, Exten
  * Time: 4:31 PM
  */
 
-sealed trait WebPrimitive {
+trait WebPrimitive {
 
   self: Primitive =>
 
@@ -64,7 +64,7 @@ trait CommonWebPrimitive {
   self: WebPrimitive =>
     override protected type ArgsTuple      = (String, http.RequestMethod, Map[String, String])
     override protected def  primArgsSyntax = Array(StringType, StringType, ListType)
-    override protected def processArguments(args: Array[Argument]) : ArgsTuple = {
+    override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
       val dest      = args(0).getString
       val reqMethod = httpMethodify(args(1)) getOrElse (throw new ExtensionException("Invalid HTTP method name supplied."))
       val params    =      paramify(args(2)) getOrElse defaultMap
@@ -76,7 +76,7 @@ trait SimpleWebPrimitive {
   self: WebPrimitive =>
     override protected type ArgsTuple      = (String)
     override protected def  primArgsSyntax = Array(StringType)
-    override protected def processArguments(args: Array[Argument]) : ArgsTuple = {
+    override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
       val dest = args(0).getString
       (dest)
     }
