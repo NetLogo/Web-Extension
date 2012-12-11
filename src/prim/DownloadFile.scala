@@ -14,11 +14,11 @@ import util.FileWriter
  * Time: 3:05 PM
  */
 
-object DownloadFile extends WebCommand with WebPrimitive {
+object DownloadFile extends WebCommand {
 
-  protected type ArgsTuple                  = (String, String)
-  protected def  primArgsSyntax: Array[Int] = Array(StringType, StringType)
-  protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
+  override protected type ArgsTuple                  = (String, String)
+  override protected def  primArgsSyntax: Array[Int] = Array(StringType, StringType)
+  override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
     val dest     = args(0).getString
     val filename = args(1).getString
     (dest, filename)
