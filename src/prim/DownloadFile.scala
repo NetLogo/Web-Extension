@@ -1,8 +1,8 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context, ExtensionException, Syntax }, Syntax.StringType
+import org.nlogo.api.{ Argument, Context, Syntax }, Syntax.StringType
 
-import java.io.{ BufferedInputStream, File }
+import java.io.BufferedInputStream
 import java.net.URL
 
 import util.FileWriter
