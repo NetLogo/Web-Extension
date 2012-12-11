@@ -2,10 +2,11 @@ package org.nlogo.extensions.web
 
 import org.nlogo.api.{ DefaultClassManager, PrimitiveManager }
 
-import prim.{ ExportInterface, ExportView, ExportWorld, ImportDrawing, ImportDrawingFine,ImportWorld, ImportWorldFine, MakeRequest }
+import prim.{ DownloadFile, ExportInterface, ExportView, ExportWorld, ImportDrawing, ImportDrawingFine, ImportWorld, ImportWorldFine, MakeRequest }
 
 class WebExtension extends DefaultClassManager {
   def load(primitiveManager: PrimitiveManager) {
+    primitiveManager.addPrimitive("download-file",       DownloadFile)
     primitiveManager.addPrimitive("export-interface",    ExportInterface)
     primitiveManager.addPrimitive("export-view",         ExportView)
     primitiveManager.addPrimitive("export-world",        ExportWorld)
