@@ -16,8 +16,8 @@ import util.FileWriter
 
 object DownloadFile extends WebCommand {
 
-  override protected type ArgsTuple                  = (String, String)
-  override protected def  primArgsSyntax: Array[Int] = Array(StringType, StringType)
+  override protected type ArgsTuple      = (String, String)
+  override protected def  primArgsSyntax = Array(StringType, StringType)
   override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
     val dest     = args(0).getString
     val filename = args(1).getString
