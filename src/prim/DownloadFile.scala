@@ -20,8 +20,8 @@ object DownloadFile extends WebCommand {
   override protected def  primArgsSyntax = Array(StringType, StringType)
   override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
     val dest     = args(0).getString
-    val filename = args(1).getString
-    (dest, filename)
+    val filepath = args(1).getString
+    (dest, filepath)
   }
 
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
