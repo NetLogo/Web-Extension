@@ -18,8 +18,9 @@ object ImportDrawingFine extends WebCommand with CommonWebPrimitive with SimpleR
     ensuringExtensionContext { (extContext: ExtensionContext) =>
       ensuringGUIWorkspace(extContext.workspace) { (guiWS: GUIWorkspace) =>
         val (dest, requestMethod, paramMap) = processArguments(args)
-        val (response, _) = generateRequester()(dest, requestMethod, paramMap)
-        guiWS.importDrawing(response)
+        processResponse(generateRequester()(dest, requestMethod, paramMap)) {
+          case (response, _) => guiWS.importDrawing(response)
+        }
       }
     }
   }

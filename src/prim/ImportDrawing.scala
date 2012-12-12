@@ -20,8 +20,9 @@ object ImportDrawing extends WebCommand with SimpleWebPrimitive {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
       ensuringGUIWorkspace(extContext.workspace) { (guiWS: GUIWorkspace) =>
         val (dest) = processArguments(args)
-        val is     = new URL(dest).openStream()
-        guiWS.importDrawing(is)
+        using(new URL(dest).openStream()) {
+          guiWS.importDrawing(_)
+        }
       }
     }
   }

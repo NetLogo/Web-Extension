@@ -23,8 +23,7 @@ object ExportView extends WebReporter with CommonWebPrimitive with RequesterGene
       val hook = () => extContext.workspace.exportView().asBase64
       val (dest, requestMethod, paramMap) = processArguments(args)
       val exporter = generateRequester(hook)
-      val (response, statusCode) = exporter(dest, requestMethod, paramMap)
-      LogoList(isToString(response), statusCode)
+      responseToLogoList(exporter(dest, requestMethod, paramMap))
     }
   }
 

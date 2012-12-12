@@ -28,9 +28,10 @@ object DownloadFileFine extends WebCommand with SimpleRequesterGenerator {
 
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     val (dest, reqMethod, params, filepath) = processArguments(args)
-    val filename = dest.reverse takeWhile (_ != '/') reverse
-    val (response, _) = generateRequester()(dest, reqMethod, params)
-    FileWriter(response, filepath, filename)
+    val filename = dest.reverse.takeWhile(_ != '/').reverse
+    processResponse(generateRequester()(dest, reqMethod, params)) {
+      case (response, _) => FileWriter(response, filepath, filename)
+    }
   }
 
 }

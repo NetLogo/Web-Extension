@@ -16,19 +16,34 @@ object FileWriter {
   private val DefaultBufferSize = 1024
 
   def apply(is: InputStream, filepath: String, filename: String) {
+
     val truePath = if (new File(filepath).isDirectory) filepath + File.separator + filename else filepath
     val file     = new File(truePath)
-    if (file.createNewFile()) {
-      val fos  = new FileOutputStream(file, true)
-      val buff = new Array[Byte](DefaultBufferSize)
-      var n    = is.read(buff)
-      while (n != -1) {
-        fos.write(buff, 0, n)
-        n = is.read(buff)
+
+    val fileWasMade = {
+      try { file.createNewFile() }
+      catch {
+        case ex: java.io.IOException => throw new ExtensionException("Failed to create file: " + truePath, ex)
       }
-      fos.close()
+    }
+
+    if (fileWasMade) {
+      val fos = new FileOutputStream(file, true)
+      try {
+        val buff = new Array[Byte](DefaultBufferSize)
+        var n    = is.read(buff)
+        while (n != -1) {
+          fos.write(buff, 0, n)
+          n = is.read(buff)
+        }
+      }
+      catch {
+        case ex: java.io.IOException => throw new ExtensionException("Failed to write file: " + truePath, ex)
+      }
+      finally { fos.close() }
     }
     else throw new ExtensionException("File '%s' already exists; please delete it or choose a different filename.".format(truePath))
+
   }
 
 }

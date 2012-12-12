@@ -1,6 +1,7 @@
 package org.nlogo.extensions.web.prim
 
 import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, Context, ExtensionException, LogoList, Primitive, Syntax }, Syntax._
+import java.io.InputStream
 
 /**
  * Created with IntelliJ IDEA.
@@ -56,8 +57,19 @@ trait WebPrimitive {
     }
   }
 
-  protected def isToString(is: java.io.InputStream) = io.Source.fromInputStream(is).mkString.trim
+  protected def isToString(is: InputStream) = io.Source.fromInputStream(is).mkString.trim
+  protected def processResponse[T](responseTuple: (InputStream, String))(f: (InputStream, String) => T) : T = {
+    responseTuple match {
+      case (response, statusCode) => try { f(response, statusCode) } finally { response.close() }
+    }
+  }
 
+  protected def responseToLogoList(responseTuple: (InputStream, String)) : LogoList = processResponse(responseTuple) { Tuple2(_, _) match {
+    case (response, statusCode) => LogoList(isToString(response), statusCode)
+  }}
+
+  protected def using[A <: { def close() }, B](stream: A)(f: A => B) : B =
+    try { f(stream) } finally { stream.close() }
 }
 
 trait CommonWebPrimitive {

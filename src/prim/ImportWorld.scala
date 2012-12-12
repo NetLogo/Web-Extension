@@ -4,6 +4,7 @@ import org.nlogo.api.{ Argument, Context }
 import org.nlogo.nvm.ExtensionContext
 
 import util.EnsuranceAgent._
+import util.EventEvaluator
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,9 +17,12 @@ import util.EnsuranceAgent._
 object ImportWorld extends WebCommand with SimpleWebPrimitive {
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
+      val hook = (reader: java.io.InputStreamReader) => {
+        extContext.workspace.importWorld(reader)
+        reader.close()
+      }
       val (dest) = processArguments(args)
-      val reader = io.Source.fromURL(dest).reader()
-      extContext.workspace.importWorld(reader)
+      EventEvaluator(io.Source.fromURL(dest).reader(), hook)
     }
   }
 }

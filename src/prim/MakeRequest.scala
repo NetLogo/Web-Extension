@@ -13,6 +13,6 @@ object MakeRequest extends WebReporter with CommonWebPrimitive with RequesterGen
   override protected type RequesterCons     = (Unit)
   override protected def  generateRequester = (_: Unit) => new Requester with Integration
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
-    (generateRequester().apply _).tupled((processArguments(args))) match { case (a, b) => LogoList(isToString(a), b) }
+    (generateRequester().apply _).tupled((processArguments(args))) match { case x => responseToLogoList(x) }
   }
 }
