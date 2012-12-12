@@ -1,5 +1,7 @@
 package org.nlogo.extensions.web.prim.http
 
+import org.nlogo.api.ExtensionException
+
 import java.io.InputStream
 import java.net.URL
 
@@ -22,7 +24,14 @@ object RequestSender {
             cookieValue: Option[String] = None, encoding: String = DefaultByteEncoding) : (InputStream, String) = {
 
     val request = ToApacheConverter(method)
-    request.setURI(new URL(dest).toURI)
+
+    try { request.setURI(new URL(dest).toURI) }
+    catch {
+      case ex: java.net.MalformedURLException =>
+        throw new ExtensionException(ex.getMessage + "\n\n" +
+                                     "Please ensure that you have preceded your URL string with the correct protocol (i.e. \"http://\").", ex)
+    }
+
     request.handleParams(paramMap, encoding)
 
     // Many, many "official" cookie-insertion approaches were tried; all failed --JAB (9/5/12)
@@ -34,11 +43,21 @@ object RequestSender {
       (responseStream, statusCode)
     }
     catch {
+      case ex: org.apache.http.client.ClientProtocolException =>
+        throw new ExtensionException(ex.getMessage + "\n\n" +
+                                     "An unknown HTTP error has occured.", ex)
+      case ex: java.net.UnknownHostException =>
+        throw new ExtensionException(ex.getMessage + "\n\n" +
+                                     "Could not find the host specified by: " + dest, ex)
+      case ex: java.io.FileNotFoundException =>
+        throw new ExtensionException(ex.getMessage + "\n\n" +
+                                     "Invalid URL supplied; please try verify that you have a connection to that resource, " +
+                                     "and that the correct URL was supplied for that resource.", ex)
       case ex: java.net.SocketException =>
-        throw new org.nlogo.api.ExtensionException(ex.getMessage + "\n\n" +
-                                                   "Request failed (likely because the body of was request was too large; " +
-                                                   "if you haven't already, try using a POST or verifying that " +
-                                                   "the destination can handle HTTP requests of that size)", ex)
+        throw new ExtensionException(ex.getMessage + "\n\n" +
+                                     "Request failed (likely because the body of was request was too large; " +
+                                     "if you haven't already, try using a POST or verifying that " +
+                                     "the destination can handle HTTP requests of that size)", ex)
     }
 
   }
