@@ -2,6 +2,7 @@ package org.nlogo.extensions.web.prim
 
 import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, Context, ExtensionException, LogoList, Primitive, Syntax }, Syntax._
 import java.io.InputStream
+import util.StreamHandler
 
 /**
  * Created with IntelliJ IDEA.
@@ -10,7 +11,7 @@ import java.io.InputStream
  * Time: 4:31 PM
  */
 
-trait WebPrimitive {
+trait WebPrimitive extends StreamHandler {
 
   self: Primitive =>
 
@@ -68,9 +69,6 @@ trait WebPrimitive {
     case (response, statusCode) => LogoList(isToString(response), statusCode)
   }}
 
-  protected def using[A <: { def close() }, B](stream: A)(f: A => B) : B =
-    try { f(stream) } finally { stream.close() }
-  
 }
 
 trait CommonWebPrimitive {

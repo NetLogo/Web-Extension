@@ -9,4 +9,6 @@ package org.nlogo.extensions.web.prim.util
 
 trait StreamHandler {
   protected type Streamer = java.io.OutputStream
+  protected def using[A <: { def close() }, B](stream: A)(f: A => B) : B =
+    try { f(stream) } finally { stream.close() }
 }
