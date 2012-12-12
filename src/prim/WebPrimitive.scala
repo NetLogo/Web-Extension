@@ -70,6 +70,7 @@ trait WebPrimitive {
 
   protected def using[A <: { def close() }, B](stream: A)(f: A => B) : B =
     try { f(stream) } finally { stream.close() }
+  
 }
 
 trait CommonWebPrimitive {
