@@ -2,7 +2,7 @@ package org.nlogo.extensions.web.prim
 
 import java.io.PrintWriter
 
-import org.nlogo.api.{ Argument, Context, LogoList }
+import org.nlogo.api.{ Argument, Context }
 import org.nlogo.nvm.ExtensionContext
 
 import util.EnsuranceAgent._
