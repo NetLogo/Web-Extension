@@ -26,7 +26,7 @@ object DownloadFile extends WebCommand {
 
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     val (dest, filepath) = processArguments(args)
-    val filename = dest.reverse.takeWhile(_ != '/').reverse
+    val filename = new java.io.File(filepath).getName
     using(new BufferedInputStream(new URL(dest).openStream())) {
       FileWriter(_, filepath, filename)
     }
