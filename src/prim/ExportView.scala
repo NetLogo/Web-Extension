@@ -20,7 +20,7 @@ object ExportView extends WebReporter with CommonWebPrimitive with RequesterGene
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val hook = () => extContext.workspace.exportView().asBase64
+      val hook = () => extContext.workspace.exportView.asBase64
       val (dest, requestMethod, paramMap) = processArguments(args)
       val exporter = generateRequester(hook)
       responseToLogoList(exporter(dest, requestMethod, paramMap))

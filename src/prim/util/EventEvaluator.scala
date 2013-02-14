@@ -1,9 +1,23 @@
 package org.nlogo.extensions.web.prim.util
 
-import org.nlogo.api.ReporterRunnable
-import org.nlogo.awt.EventQueue
-import org.nlogo.nvm.Workspace
-import org.nlogo.swing.Implicits
+import
+  scala.{ concurrent, reflect },
+    concurrent.{ Await, duration },
+      duration._,
+    reflect.ClassTag
+
+import
+  akka.{ actor, pattern, util },
+    actor.{ Actor, ActorRef, ActorSystem, Props },
+    pattern.ask,
+    util.Timeout
+
+import
+  org.nlogo.{ api, awt, nvm, swing },
+    api.ReporterRunnable,
+    awt.EventQueue,
+    nvm.Workspace,
+    swing.Implicits
 
 /**
  * Created with IntelliJ IDEA.
@@ -14,8 +28,6 @@ import org.nlogo.swing.Implicits
 
 object EventEvaluator {
 
-  import actors.Actor
-
   sealed protected trait EventActorProtocol
   protected object EventActorProtocol {
     case object Evaluate extends EventActorProtocol
@@ -23,22 +35,22 @@ object EventEvaluator {
 
   import EventActorProtocol._
 
+  private val system = ActorSystem("LoggingSystem")
+
   protected class EventEvaluationActor[T, U](stream: T, func: (T) => U) extends Actor {
     import Implicits.thunk2runnable
-    def act() {
-      loop {
-        react {
-          case Evaluate => EventQueue.invokeLater{ () => reply(func(stream)); }
-        }
-      }
+    override def receive = {
+      case Evaluate => EventQueue.invokeLater{ () => sender ! func(stream) }
     }
   }
 
   // The stupid `start` method only returns an `Actor`; can't have a more specific return type --JAB (10/23/12)
-  protected def generateActor[T, U](stream: T, hook: (T) => U) : Actor = new EventEvaluationActor(stream, hook).start()
+  protected def generateActor[T, U](stream: T, hook: (T) => U) : ActorRef = system.actorOf(Props(new EventEvaluationActor(stream, hook)))
 
-  def apply[T, U](stream: T, hook: (T) => U) : U =
-    (generateActor(stream, hook) !! Evaluate)().asInstanceOf[U]
+  def apply[T, U : ClassTag](stream: T, hook: (T) => U) : U = {
+    implicit val timeout = Timeout(30 seconds)
+    Await.result((generateActor(stream, hook) ? Evaluate).mapTo[U], timeout.duration)
+  }
 
   // This _cannot_ run within an actor; if it does, NetLogo freezes (for some reason)
   // At least, that's the case with exporting the interface --JAB (10/23/12)
