@@ -40,7 +40,11 @@ object EventEvaluator {
   protected class EventEvaluationActor[T, U](stream: T, func: (T) => U) extends Actor {
     import Implicits.thunk2runnable
     override def receive = {
-      case Evaluate => EventQueue.invokeLater{ () => sender ! func(stream) }
+      case Evaluate =>
+        EventQueue.invokeLater {
+          val s = sender // Odd that I have to close over `sender` here, lest the reply is never received
+          () => s ! func(stream)
+        }
     }
   }
 
