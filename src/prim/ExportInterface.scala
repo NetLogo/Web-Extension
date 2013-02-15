@@ -1,6 +1,6 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context, LogoList }
+import org.nlogo.api.{ Argument, Context }
 import org.nlogo.app.App
 import org.nlogo.awt.Images
 import org.nlogo.nvm.{ ExtensionContext, Workspace }

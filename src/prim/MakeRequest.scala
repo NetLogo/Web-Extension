@@ -1,6 +1,6 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context, LogoList }
+import org.nlogo.api.{ Argument, Context }
 
 /**
  * Created with IntelliJ IDEA.

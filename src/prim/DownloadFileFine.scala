@@ -2,9 +2,6 @@ package org.nlogo.extensions.web.prim
 
 import org.nlogo.api.{ Argument, Context, ExtensionException, Syntax }, Syntax.{ ListType, StringType }
 
-import java.io.BufferedInputStream
-import java.net.URL
-
 import util.FileWriter
 
 /**

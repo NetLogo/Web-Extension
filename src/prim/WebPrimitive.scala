@@ -2,7 +2,6 @@ package org.nlogo.extensions.web.prim
 
 import org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, Context, ExtensionException, LogoList, Primitive, Syntax }, Syntax._
 import java.io.InputStream
-import util.StreamHandler
 
 /**
  * Created with IntelliJ IDEA.
