@@ -1,11 +1,10 @@
-package org.nlogo.extensions.web.prim
+package org.nlogo.extensions.web.prim.requester
 
 import
   java.io.{ ByteArrayOutputStream, UnsupportedEncodingException }
 
 import
-  requester.{ Requester, WebIntegration },
-  util.{ EventEvaluator, Streamer }
+  org.nlogo.extensions.web.prim.util.{ EventEvaluator, Streamer }
 
 /**
  * Created with IntelliJ IDEA.
