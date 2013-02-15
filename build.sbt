@@ -6,10 +6,10 @@ scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xlint", "-Xfat
                       "-encoding", "us-ascii", "-language:_")
 
 libraryDependencies ++= Seq(
-  "org.nlogo" % "NetLogoEngine" % "5.1.x-cc52dc0" from
-    "http://ccl.northwestern.edu/devel/NetLogoEngine-cc52dc0.jar",
-  "org.nlogo" % "NetLogoGUI" % "5.1.x-cc52dc0" from
-    "http://ccl.northwestern.edu/devel/NetLogoGUI-cc52dc0.jar",
+  "org.nlogo" % "NetLogoEngine" % "5.1.x-20885db" from
+    "http://ccl.northwestern.edu/devel/NetLogoEngine-20885db.jar",
+  "org.nlogo" % "NetLogoGUI" % "5.1.x-20885db" from
+    "http://ccl.northwestern.edu/devel/NetLogoGUI-20885db.jar",
   "org.apache.httpcomponents" % "httpclient" % "4.2",
   "com.typesafe.akka" %% "akka-actor" % "2.1.0",
   "org.picocontainer" % "picocontainer" % "2.13.6",
