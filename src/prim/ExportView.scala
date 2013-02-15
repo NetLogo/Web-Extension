@@ -1,10 +1,14 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context }
-import org.nlogo.nvm.ExtensionContext
+import
+  org.nlogo.{ api, nvm },
+    api.{ Argument, Context },
+    nvm.ExtensionContext
 
-import util.EnsuranceAgent._
-import util.ImageToBase64._
+import
+  util.{ EnsuranceAgent, ImageToBase64 },
+    EnsuranceAgent._,
+    ImageToBase64._
 
 /**
  * Created with IntelliJ IDEA.

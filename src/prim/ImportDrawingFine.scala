@@ -1,10 +1,13 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context }
-import org.nlogo.nvm.ExtensionContext
-import org.nlogo.window.GUIWorkspace
+import
+  org.nlogo.{ api, nvm, window },
+    api.{ Argument, Context },
+    nvm.ExtensionContext,
+    window.GUIWorkspace
 
-import util.EnsuranceAgent._
+import
+  util.EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.

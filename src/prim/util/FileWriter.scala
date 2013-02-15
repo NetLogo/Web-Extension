@@ -1,8 +1,10 @@
 package org.nlogo.extensions.web.prim.util
 
-import org.nlogo.api.ExtensionException
+import
+  org.nlogo.api.ExtensionException
 
-import java.io.{ File, FileOutputStream, InputStream, IOException }
+import
+  java.io.{ File, FileOutputStream, InputStream, IOException }
 
 /**
  * Created with IntelliJ IDEA.
