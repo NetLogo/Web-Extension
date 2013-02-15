@@ -5,8 +5,9 @@ import
     Syntax.{ ListType, StringType }
 
 import
-  requester.SimpleRequesterGenerator,
-  util.FileWriter
+  org.nlogo.extensions.web.{ requester, util },
+    requester.SimpleRequesterGenerator,
+    util.FileWriter
 
 /**
  * Created with IntelliJ IDEA.

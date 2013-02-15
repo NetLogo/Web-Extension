@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web.prim.util
+package org.nlogo.extensions.web.util
 
 import org.nlogo.api.ReporterRunnable
 import org.nlogo.awt.EventQueue

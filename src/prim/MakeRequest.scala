@@ -4,7 +4,8 @@ import
   org.nlogo.api.{ Argument, Context }
 
 import
-  requester.{ Requester, RequesterGenerator }
+  org.nlogo.extensions.web.{ requester, util },
+    requester.{ Requester, RequesterGenerator }
 
 /**
  * Created with IntelliJ IDEA.

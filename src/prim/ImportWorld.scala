@@ -6,7 +6,7 @@ import
     nvm.ExtensionContext
 
 import
-  util.{ EnsuranceAgent, EventEvaluator },
+  org.nlogo.extensions.web.util.{ EnsuranceAgent, EventEvaluator },
     EnsuranceAgent._
 
 /**

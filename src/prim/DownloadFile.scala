@@ -10,7 +10,7 @@ import
     net.URL
 
 import
-  util.{ FileWriter, using }
+  org.nlogo.extensions.web.util.{ FileWriter, using }
 
 /**
  * Created with IntelliJ IDEA.

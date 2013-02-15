@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web.prim.requester
+package org.nlogo.extensions.web.requester
 
 /**
  * Created with IntelliJ IDEA.

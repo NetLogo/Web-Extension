@@ -7,6 +7,9 @@ import
   org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, Context, ExtensionException, LogoList, Primitive, Syntax },
     Syntax._
 
+import
+  org.nlogo.extensions.web.requester.http.RequestMethod
+
 /**
  * Created with IntelliJ IDEA.
  * User: Jason
@@ -50,10 +53,8 @@ trait WebPrimitive {
 
   }
 
-  protected def httpMethodify(arg: Argument) = {
-    try {
-      requester.http.RequestMethod(arg.getString)
-    }
+  protected def httpMethodify(arg: Argument) : Option[RequestMethod] = {
+    try  RequestMethod(arg.getString)
     catch {
       case ex: Exception =>
         System.err.println("Failed to get HTTP method from argument.\n\n" + ex.getMessage)
@@ -76,7 +77,7 @@ trait WebPrimitive {
 
 trait CommonWebPrimitive {
   self: WebPrimitive =>
-    override protected type ArgsTuple      = (String, requester.http.RequestMethod, Map[String, String])
+    override protected type ArgsTuple      = (String, RequestMethod, Map[String, String])
     override protected def  primArgsSyntax = Array(StringType, StringType, ListType)
     override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
       val dest      = args(0).getString
