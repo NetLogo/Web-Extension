@@ -48,7 +48,7 @@ object EventEvaluator {
   protected def generateActor[T, U](stream: T, hook: (T) => U) : ActorRef = system.actorOf(Props(new EventEvaluationActor(stream, hook)))
 
   def apply[T, U : ClassTag](stream: T, hook: (T) => U) : U = {
-    implicit val timeout = Timeout(30 seconds)
+    implicit val timeout = Timeout(20 seconds)
     Await.result((generateActor(stream, hook) ? Evaluate).mapTo[U], timeout.duration)
   }
 
