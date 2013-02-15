@@ -42,7 +42,7 @@ object FileWriter {
         }
       }
     }
-    else throw new ExtensionException("File '%s' already exists; please delete it or choose a different filename.".format(truePath))
+    else throw new ExtensionException(s"File '$truePath' already exists; please delete it or choose a different filename.")
 
   }
 

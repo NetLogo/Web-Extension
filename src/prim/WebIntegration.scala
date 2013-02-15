@@ -26,7 +26,7 @@ trait WISEIntegration extends WebIntegration {
   private val WorkgroupIDProp = "wise.workgroup_id"
 
   override protected def constructData(preData: String) =
-    """{"nodeId":"node_0.jn", "visitEndTime":1345775000000, "hintStates":[], "nodeStates":[{"response":"%s"}], "visitStartTime":1345774000000, "nodeType":"JnlpNode", "visitPostTime":null}""".format(preData)
+    s"""{"nodeId":"node_0.jn", "visitEndTime":1345775000000, "hintStates":[], "nodeStates":[{"response":"${preData}"}], "visitStartTime":1345774000000, "nodeType":"JnlpNode", "visitPostTime":null}"""
 
   protected override val kvAdditionsMap = Map(
     PeriodIDKey    -> getProp(PeriodIDProp),

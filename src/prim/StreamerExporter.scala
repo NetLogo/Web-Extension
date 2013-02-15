@@ -27,10 +27,10 @@ class StreamerExporter(hook: (Streamer) => Unit) extends Requester {
     }
     catch {
       case ex: UnsupportedEncodingException =>
-        System.err.println("Unable to convert hooked text to desired encoding: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
+        System.err.println(s"Unable to convert hooked text to desired encoding: ${ex.getMessage}\n${ex.getStackTraceString}")
         None
       case ex: Exception =>
-        System.err.println("Unknown error on hooking/exporting: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
+        System.err.println(s"Unknown error on hooking/exporting: ${ex.getMessage}\n${ex.getStackTraceString}")
         None
     }
     finally {

@@ -25,7 +25,8 @@ object EnsuranceAgent {
     ws match {
       case guiWS: GUIWorkspace => f(guiWS)
       case other => throw new UnsupportedOperationException(
-        "Cannot use this primitive from any type of workspace by a `GUIWorkspace`; you're using a %s.".format(other.getClass.getName))
+        s"Cannot use this primitive from any type of workspace by a `GUIWorkspace`; you're using a ${other.getClass.getName}."
+      )
     }
   }
 

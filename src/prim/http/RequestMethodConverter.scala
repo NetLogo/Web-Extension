@@ -26,7 +26,7 @@ private trait URLParams extends ParamHandler {
 
   override def handleParams(paramMap: Map[String, String], encoding: String) {
     val encode   = java.net.URLEncoder.encode(_: String, encoding)
-    val queryStr = paramMap map { case (k, v) => "%s=%s".format(encode(k), encode(v)) } mkString ("?", "&", "")
+    val queryStr = paramMap map { case (k, v) => s"${encode(k)}=${encode(v)}" } mkString ("?", "&", "")
     setURI(new URI(getURI.toString + queryStr))
   }
 
