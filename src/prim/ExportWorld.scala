@@ -23,7 +23,7 @@ import
 object ExportWorld extends WebReporter with CommonWebPrimitive with RequesterGenerator {
 
   override protected type RequesterCons     = ((Streamer) => Unit)
-  override protected def  generateRequester = (hook: (Streamer) => Unit) => new WorldExporter(hook) with Integration
+  override protected def  generateRequester = (hook: (Streamer) => Unit) => new StreamerExporter(hook) with Integration with ByteStream
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { case extContext: ExtensionContext =>
@@ -39,39 +39,5 @@ object ExportWorld extends WebReporter with CommonWebPrimitive with RequesterGen
     }
   }
 
-  protected class WorldExporter(hook: (Streamer) => Unit) extends Requester {
-
-    self: WebIntegration =>
-
-    import java.io.{ ByteArrayOutputStream, UnsupportedEncodingException }
-
-    private val DefaultByteEncoding = "UTF-8"
-
-    override protected def generateAddedExportData = {
-
-      val outputStream = new ByteArrayOutputStream()
-
-      try {
-        EventEvaluator(outputStream, hook)
-        Option(outputStream.toString(DefaultByteEncoding))
-      }
-      catch {
-        case ex: UnsupportedEncodingException =>
-          System.err.println("Unable to convert hooked text to desired encoding: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
-          None
-        case ex: Exception =>
-          System.err.println("Unknown error on hooking/exporting: %s\n%s".format(ex.getMessage, ex.getStackTraceString))
-          None
-      }
-      finally {
-        outputStream.close()
-      }
-
-    }
-
-  }
-
 }
-
-
 
