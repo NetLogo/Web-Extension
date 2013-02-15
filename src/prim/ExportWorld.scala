@@ -1,12 +1,16 @@
 package org.nlogo.extensions.web.prim
 
-import java.io.PrintWriter
+import
+  java.io.PrintWriter
 
-import org.nlogo.api.{ Argument, Context }
-import org.nlogo.nvm.ExtensionContext
+import
+  org.nlogo.{ api, nvm },
+    api.{ Argument, Context },
+    nvm.ExtensionContext
 
-import util.EnsuranceAgent._
-import util.{ EventEvaluator, StreamHandler }
+import
+  util.{ EnsuranceAgent, Streamer },
+    EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,7 +20,7 @@ import util.{ EventEvaluator, StreamHandler }
  */
 
 // Hooks in and sends an `export-world` to a remote location
-object ExportWorld extends WebReporter with CommonWebPrimitive with StreamHandler with RequesterGenerator {
+object ExportWorld extends WebReporter with CommonWebPrimitive with RequesterGenerator {
 
   override protected type RequesterCons     = ((Streamer) => Unit)
   override protected def  generateRequester = (hook: (Streamer) => Unit) => new WorldExporter(hook) with Integration

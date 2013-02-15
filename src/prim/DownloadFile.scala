@@ -5,7 +5,7 @@ import org.nlogo.api.{ Argument, Context, Syntax }, Syntax.StringType
 import java.io.BufferedInputStream
 import java.net.URL
 
-import util.FileWriter
+import util.{ FileWriter, using }
 
 /**
  * Created with IntelliJ IDEA.

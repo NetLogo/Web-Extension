@@ -11,7 +11,7 @@ import java.io.{ File, FileOutputStream, InputStream, IOException }
  * Time: 4:06 PM
  */
 
-object FileWriter extends StreamHandler {
+object FileWriter {
 
   private val DefaultBufferSize = 1024
 

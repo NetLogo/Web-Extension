@@ -10,7 +10,7 @@ import java.io.InputStream
  * Time: 4:31 PM
  */
 
-trait WebPrimitive extends StreamHandler {
+trait WebPrimitive {
 
   self: Primitive =>
 
