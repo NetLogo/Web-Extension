@@ -52,7 +52,7 @@ trait WebPrimitive {
 
   protected def httpMethodify(arg: Argument) = {
     try {
-      http.RequestMethod(arg.getString)
+      requester.http.RequestMethod(arg.getString)
     }
     catch {
       case ex: Exception =>
@@ -76,7 +76,7 @@ trait WebPrimitive {
 
 trait CommonWebPrimitive {
   self: WebPrimitive =>
-    override protected type ArgsTuple      = (String, http.RequestMethod, Map[String, String])
+    override protected type ArgsTuple      = (String, requester.http.RequestMethod, Map[String, String])
     override protected def  primArgsSyntax = Array(StringType, StringType, ListType)
     override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
       val dest      = args(0).getString

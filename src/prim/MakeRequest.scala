@@ -3,6 +3,9 @@ package org.nlogo.extensions.web.prim
 import
   org.nlogo.api.{ Argument, Context }
 
+import
+  requester.{ Requester, RequesterGenerator }
+
 /**
  * Created with IntelliJ IDEA.
  * User: Jason

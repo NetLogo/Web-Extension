@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web.prim.http
+package org.nlogo.extensions.web.prim.requester.http
 
 import
   java.{ net, nio },

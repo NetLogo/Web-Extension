@@ -9,6 +9,7 @@ import
   java.io.{ InputStream, InputStreamReader }
 
 import
+  requester.SimpleRequesterGenerator,
   util.{ EnsuranceAgent, EventEvaluator },
     EnsuranceAgent._
 
