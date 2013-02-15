@@ -7,6 +7,7 @@ import
     window.GUIWorkspace
 
 import
+  requester.SimpleRequesterGenerator,
   util.EnsuranceAgent._
 
 /**

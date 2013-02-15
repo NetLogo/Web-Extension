@@ -6,6 +6,7 @@ import
     nvm.ExtensionContext
 
 import
+  requester.{ Requester, RequesterGenerator, WebIntegration },
   util.EnsuranceAgent._
 
 /**

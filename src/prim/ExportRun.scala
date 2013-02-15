@@ -7,6 +7,7 @@ import
     nvm.ExtensionContext
 
 import
+  requester.RequesterGenerator,
   util.{ EnsuranceAgent, Streamer },
     EnsuranceAgent._
 

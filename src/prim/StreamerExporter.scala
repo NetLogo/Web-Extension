@@ -4,6 +4,7 @@ import
   java.io.{ ByteArrayOutputStream, UnsupportedEncodingException }
 
 import
+  requester.{ Requester, WebIntegration },
   util.{ EventEvaluator, Streamer }
 
 /**

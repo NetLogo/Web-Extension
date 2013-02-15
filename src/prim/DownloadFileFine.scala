@@ -5,6 +5,7 @@ import
     Syntax.{ ListType, StringType }
 
 import
+  requester.SimpleRequesterGenerator,
   util.FileWriter
 
 /**
@@ -16,7 +17,7 @@ import
 
 object DownloadFileFine extends WebCommand with SimpleRequesterGenerator {
 
-  override protected type ArgsTuple      = (String, http.RequestMethod, Map[String, String], String)
+  override protected type ArgsTuple      = (String, requester.http.RequestMethod, Map[String, String], String)
   override protected def  primArgsSyntax = Array(StringType, StringType, ListType, StringType)
   override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
     val dest      = args(0).getString
