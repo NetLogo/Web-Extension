@@ -1,11 +1,16 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context, Syntax }, Syntax.StringType
+import
+  org.nlogo.api.{ Argument, Context, Syntax },
+    Syntax.StringType
 
-import java.io.BufferedInputStream
-import java.net.URL
+import
+  java.{ io, net },
+    io.BufferedInputStream,
+    net.URL
 
-import util.{ FileWriter, using }
+import
+  util.{ FileWriter, using }
 
 /**
  * Created with IntelliJ IDEA.

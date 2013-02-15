@@ -1,12 +1,16 @@
 package org.nlogo.extensions.web.prim.http
 
-import java.net.URI
-import java.nio.charset.Charset
+import
+  java.{ net, nio },
+    net.URI,
+    nio.charset.Charset
 
-
-import org.apache.http.{ client, message }
-import message.{ BasicNameValuePair => KVPair }
-import client.entity.{ UrlEncodedFormEntity => URLEntity }, client.methods._
+import
+  org.apache.http.{ client, message },
+    client.{ entity, methods },
+      entity.{ UrlEncodedFormEntity => URLEntity },
+      methods._,
+    message.{ BasicNameValuePair => KVPair }
 
 /**
  * Created with IntelliJ IDEA.

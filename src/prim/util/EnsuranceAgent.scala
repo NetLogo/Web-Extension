@@ -1,8 +1,10 @@
 package org.nlogo.extensions.web.prim.util
 
-import org.nlogo.api.Context
-import org.nlogo.nvm.{ ExtensionContext, Workspace }
-import org.nlogo.window.GUIWorkspace
+import
+  org.nlogo.{ api, nvm, window },
+    api.Context,
+    nvm.{ ExtensionContext, Workspace },
+    window.GUIWorkspace
 
 /**
  * Created with IntelliJ IDEA.

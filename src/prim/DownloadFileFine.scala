@@ -1,8 +1,11 @@
 package org.nlogo.extensions.web.prim
 
-import org.nlogo.api.{ Argument, Context, ExtensionException, Syntax }, Syntax.{ ListType, StringType }
+import
+  org.nlogo.api.{ Argument, Context, ExtensionException, Syntax },
+    Syntax.{ ListType, StringType }
 
-import util.FileWriter
+import
+  util.FileWriter
 
 /**
  * Created with IntelliJ IDEA.

@@ -1,6 +1,7 @@
 package org.nlogo.extensions.web.prim
 
-import java.io.InputStream
+import
+  java.io.InputStream
 
 /**
  * Created with IntelliJ IDEA.

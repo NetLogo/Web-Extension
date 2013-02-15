@@ -1,9 +1,15 @@
 package org.nlogo.extensions.web.prim.util
 
-import java.awt.image.BufferedImage
-import java.io.ByteArrayOutputStream
-import javax.imageio.ImageIO
-import org.apache.commons.codec.binary.Base64OutputStream
+import
+  java.{ awt, io },
+    awt.image.BufferedImage,
+    io.ByteArrayOutputStream
+
+import
+  javax.imageio.ImageIO
+
+import
+  org.apache.commons.codec.binary.Base64OutputStream
 
 /**
  * Created with IntelliJ IDEA.

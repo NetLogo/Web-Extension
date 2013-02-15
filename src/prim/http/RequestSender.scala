@@ -1,11 +1,16 @@
 package org.nlogo.extensions.web.prim.http
 
-import org.nlogo.api.ExtensionException
+import
+  java.{ io, net },
+    io.InputStream,
+    net.URL
 
-import java.io.InputStream
-import java.net.URL
+import
+  org.nlogo.api.ExtensionException
 
-import org.apache.http.{ HttpResponse, impl }, impl.client.DefaultHttpClient
+import
+  org.apache.http.{ HttpResponse, impl },
+    impl.client.DefaultHttpClient
 
 /**
  * Created with IntelliJ IDEA.
