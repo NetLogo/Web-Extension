@@ -7,9 +7,10 @@ import
     nvm.ExtensionContext
 
 import
-  requester.{ Base64Stream, RequesterGenerator, StreamerExporter },
-  util.{ EnsuranceAgent, Streamer },
-    EnsuranceAgent._
+  org.nlogo.extensions.web.{ requester, util },
+    requester.{ Base64Stream, RequesterGenerator, StreamerExporter },
+    util.{ EnsuranceAgent, Streamer },
+      EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.

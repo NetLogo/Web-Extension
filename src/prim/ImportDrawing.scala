@@ -10,7 +10,7 @@ import
     window.GUIWorkspace
 
 import
-  util.{ EnsuranceAgent, using },
+  org.nlogo.extensions.web.util.{ EnsuranceAgent, using },
     EnsuranceAgent._
 
 /**

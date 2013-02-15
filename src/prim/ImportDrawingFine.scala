@@ -7,8 +7,9 @@ import
     window.GUIWorkspace
 
 import
-  requester.SimpleRequesterGenerator,
-  util.EnsuranceAgent._
+  org.nlogo.extensions.web.{ requester, util },
+    requester.SimpleRequesterGenerator,
+    util.EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.

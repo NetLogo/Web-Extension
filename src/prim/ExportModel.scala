@@ -6,8 +6,9 @@ import
     nvm.ExtensionContext
 
 import
-  requester.{ Requester, RequesterGenerator, WebIntegration },
-  util.EnsuranceAgent._
+  org.nlogo.extensions.web.{ requester, util },
+    requester.{ Requester, RequesterGenerator, WebIntegration },
+    util.EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.

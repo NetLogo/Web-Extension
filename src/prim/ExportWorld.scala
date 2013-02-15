@@ -9,9 +9,10 @@ import
     nvm.ExtensionContext
 
 import
-  requester.{ ByteStream, RequesterGenerator, StreamerExporter },
-  util.{ EnsuranceAgent, Streamer },
-    EnsuranceAgent._
+  org.nlogo.extensions.web.{ requester, util },
+    requester.{ ByteStream, RequesterGenerator, StreamerExporter },
+    util.{ EnsuranceAgent, Streamer },
+      EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.

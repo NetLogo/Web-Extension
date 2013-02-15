@@ -9,9 +9,10 @@ import
   java.io.{ InputStream, InputStreamReader }
 
 import
-  requester.SimpleRequesterGenerator,
-  util.{ EnsuranceAgent, EventEvaluator },
-    EnsuranceAgent._
+  org.nlogo.extensions.web.{ requester, util },
+    requester.SimpleRequesterGenerator,
+    util.{ EnsuranceAgent, EventEvaluator },
+      EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.

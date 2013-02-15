@@ -6,10 +6,11 @@ import
     nvm.ExtensionContext
 
 import
-  requester.{ Requester, RequesterGenerator, WebIntegration },
-  util.{ EnsuranceAgent, ImageToBase64 },
-    EnsuranceAgent._,
-    ImageToBase64._
+  org.nlogo.extensions.web.{ requester, util },
+    requester.{ Requester, RequesterGenerator, WebIntegration },
+    util.{ EnsuranceAgent, ImageToBase64 },
+      EnsuranceAgent._,
+      ImageToBase64._
 
 /**
  * Created with IntelliJ IDEA.
