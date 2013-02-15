@@ -9,7 +9,7 @@ import
     nvm.ExtensionContext
 
 import
-  requester.RequesterGenerator,
+  requester.{ ByteStream, RequesterGenerator, StreamerExporter },
   util.{ EnsuranceAgent, Streamer },
     EnsuranceAgent._
 
