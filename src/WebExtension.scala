@@ -10,6 +10,7 @@ class WebExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("download-file-fine",  DownloadFileFine)
     primitiveManager.addPrimitive("export-interface",    ExportInterface)
     primitiveManager.addPrimitive("export-model",        ExportModel)
+    primitiveManager.addPrimitive("export-run",          ExportRun)
     primitiveManager.addPrimitive("export-view",         ExportView)
     primitiveManager.addPrimitive("export-world",        ExportWorld)
     primitiveManager.addPrimitive("import-drawing",      ImportDrawing)
