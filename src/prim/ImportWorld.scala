@@ -1,6 +1,9 @@
 package org.nlogo.extensions.web.prim
 
 import
+  java.io.InputStreamReader
+
+import
   org.nlogo.{ api, nvm },
     api.{ Argument, Context },
     nvm.ExtensionContext
@@ -20,7 +23,7 @@ import
 object ImportWorld extends WebCommand with SimpleWebPrimitive {
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val hook = (reader: java.io.InputStreamReader) => {
+      val hook = (reader: InputStreamReader) => {
         extContext.workspace.importWorld(reader)
         reader.close()
       }
