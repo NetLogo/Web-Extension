@@ -1,6 +1,9 @@
 package org.nlogo.extensions.web.prim
 
 import
+  java.io.InputStream
+
+import
   org.nlogo.{ api, app },
     api.{ Argument, Context },
     app.App
@@ -9,7 +12,9 @@ import
   org.apache.commons.codec.binary.Base64InputStream
 
 import
-  org.nlogo.extensions.web.requester.SimpleRequesterGenerator
+  org.nlogo.extensions.web.{ requester, util },
+    requester.SimpleRequesterGenerator,
+    util.EventEvaluator
 
 /**
  * Created with IntelliJ IDEA.
@@ -20,9 +25,14 @@ import
 
 object ImportRunFine extends WebCommand with CommonWebPrimitive with SimpleRequesterGenerator {
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
+    val hook = (is: InputStream) => {
+      val is64 = new Base64InputStream(is)
+      App.app.tabs.reviewTab.loadRun(is64)
+      is64.close()
+    }
     val (dest, requestMethod, paramMap) = processArguments(args)
     processResponse(generateRequester()(dest, requestMethod, paramMap)) {
-      case (response, _) => App.app.tabs.reviewTab.loadRun(new Base64InputStream(response))
+      case (response, _) => EventEvaluator(response, hook)
     }
   }
 }
