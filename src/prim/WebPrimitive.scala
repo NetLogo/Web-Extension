@@ -73,6 +73,13 @@ trait WebPrimitive {
     case (response, statusCode) => LogoList(isToString(response), statusCode)
   }}
 
+  protected def carefully[T](f: => T) : T = {
+    try f
+    catch {
+      case ex: Exception => throw new org.nlogo.api.ExtensionException(ex)
+    }
+  }
+
 }
 
 trait CommonWebPrimitive {
@@ -102,13 +109,12 @@ import DummyImplicit.dummyImplicit
 // Using `DummyImplicit` so that the new and old `perform`/`report` methods have distinct signatures after erasure --JAB (10/22/12)
 abstract class WebCommand extends DefaultCommand with WebPrimitive {
   override def getSyntax = commandSyntax(primArgsSyntax)
-  override def perform(args: Array[Argument], context: Context) { perform(args)(context, dummyImplicit) }
+  override def perform(args: Array[Argument], context: Context) { carefully(perform(args)(context, dummyImplicit)) }
   /*new!*/ def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit)
 }
 
 abstract class WebReporter extends DefaultReporter with WebPrimitive {
   override def getSyntax = reporterSyntax(primArgsSyntax, ListType)
-  override def report(args: Array[Argument], context: Context) : AnyRef = { report(args)(context, dummyImplicit) }
+  override def report(args: Array[Argument], context: Context) : AnyRef = { carefully(report(args)(context, dummyImplicit)) }
   /*new!*/ def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef
 }
-
