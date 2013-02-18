@@ -19,7 +19,7 @@ class StreamerExporter(hook: (Streamer) => Unit) extends Requester {
 
   private val DefaultByteEncoding = "UTF-8"
 
-  override protected def generateAddedExportData = {
+  override protected def generateAddedExportData : Option[String] = {
 
     val outputStream = new ByteArrayOutputStream()
 
@@ -58,3 +58,10 @@ trait Base64Stream extends OutStream {
   override type OStream = Base64OutputStream
   override def convertStream(baos: ByteArrayOutputStream) : OStream = new Base64OutputStream(baos)
 }
+
+trait GZIPStream extends OutStream {
+  import java.util.zip.GZIPOutputStream
+  override type OStream = GZIPOutputStream
+  override def convertStream(baos: ByteArrayOutputStream) : OStream = new GZIPOutputStream(baos)
+}
+
