@@ -6,12 +6,14 @@ import
     nvm.ExtensionContext
 
 import
-  java.io.{ InputStream, InputStreamReader }
+  java.{ io, util },
+    io.{ InputStream, InputStreamReader },
+    util.zip.GZIPInputStream
 
 import
-  org.nlogo.extensions.web.{ requester, util },
+  org.nlogo.extensions.web.{ requester, util => web_util },
     requester.SimpleRequesterGenerator,
-    util.{ EnsuranceAgent, EventEvaluator },
+    web_util.{ EnsuranceAgent, EventEvaluator },
       EnsuranceAgent._
 
 /**
@@ -25,7 +27,8 @@ object ImportWorldFine extends WebCommand with CommonWebPrimitive with SimpleReq
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
       val hook = (stream: InputStream) => {
-        extContext.workspace.importWorld(new InputStreamReader(stream))
+        val gis = new GZIPInputStream(stream)
+        extContext.workspace.importWorld(new InputStreamReader(gis))
         stream.close()
       }
       val (dest, requestMethod, paramMap) = processArguments(args)
