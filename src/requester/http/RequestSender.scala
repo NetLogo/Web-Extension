@@ -25,7 +25,7 @@ object RequestSender {
 
   protected def generateClient = new DefaultHttpClient
 
-  def apply(dest: String, method: RequestMethod, paramMap: Map[String, String],
+  def apply(dest: String, method: RequestMethod, paramMap: Map[String, String], lazyMap: Map[String, InputStream] = Map(),
             cookieValue: Option[String] = None, encoding: String = DefaultByteEncoding) : (InputStream, String) = {
 
     val request = ToApacheConverter(method)
@@ -37,7 +37,7 @@ object RequestSender {
                                      "Please ensure that you have preceded your URL string with the correct protocol (i.e. \"http://\").", ex)
     }
 
-    request.handleParams(paramMap, encoding)
+    request.handleParams(paramMap, encoding, lazyMap)
 
     // Many, many "official" cookie-insertion approaches were tried; all failed --JAB (9/5/12)
     cookieValue foreach (cookie => request.setHeader("COOKIE", "JSESSIONID=" + cookie))

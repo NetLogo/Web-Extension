@@ -1,6 +1,9 @@
 package org.nlogo.extensions.web.prim
 
 import
+  java.io.{ ByteArrayInputStream, InputStream }
+
+import
   org.nlogo.{ api, app, awt, nvm },
     api.{ Argument, Context },
     app.App,
@@ -23,8 +26,8 @@ import
 
 object ExportInterface extends WebReporter with CommonWebPrimitive with RequesterGenerator {
 
-  override protected type RequesterCons     = ((Unit) => String, Workspace)
-  override protected def  generateRequester = (hookAndWS: ((Unit) => String, Workspace)) => (ViewExporter.apply _).tupled(hookAndWS)
+  override protected type RequesterCons     = ((Unit) => InputStream, Workspace)
+  override protected def  generateRequester = (hookAndWS: ((Unit) => InputStream, Workspace)) => (ViewExporter.apply _).tupled(hookAndWS)
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
@@ -39,7 +42,7 @@ object ExportInterface extends WebReporter with CommonWebPrimitive with Requeste
            Now that I think of it... why don't we need to do that when exporting the view...? --JAB (10/23/12)
           */
           val component = App.app.tabs.interfaceTab.getInterfacePanel
-          Images.paintToImage(component).asBase64
+          new ByteArrayInputStream(Images.paintToImage(component).asBase64.getBytes)
       }
       val (dest, requestMethod, paramMap) = processArguments(args)
       val exporter = generateRequester(hook, extContext.workspace)
@@ -47,7 +50,7 @@ object ExportInterface extends WebReporter with CommonWebPrimitive with Requeste
     }
   }
 
-  protected class ViewExporter(hook: (Unit) => String, workspace: Workspace) extends Requester {
+  protected class ViewExporter(hook: (Unit) => InputStream, workspace: Workspace) extends Requester {
     self: WebIntegration =>
       override protected def generateAddedExportData = Option(EventEvaluator.withinWorkspace((), hook, workspace))
   }
@@ -55,7 +58,7 @@ object ExportInterface extends WebReporter with CommonWebPrimitive with Requeste
   // Ladies and gentlemen, I will now lead you in performing one weary "Meh...!" for hacks. --JAB
   // No, seriously, why isn't there better syntactic sugar for partially applying (and tupling) a constructor while mixing in a trait?
   private object ViewExporter {
-    def apply(hook: (Unit) => String, workspace: Workspace) = new ViewExporter(hook, workspace) with Integration
+    def apply(hook: (Unit) => InputStream, workspace: Workspace) = new ViewExporter(hook, workspace) with Integration
   }
 
 }

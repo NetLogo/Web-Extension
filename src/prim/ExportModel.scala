@@ -1,8 +1,12 @@
 package org.nlogo.extensions.web.prim
 
 import
-  org.nlogo. { api, nvm },
+  java.io.{ ByteArrayInputStream, InputStream }
+
+import
+  org.nlogo. { api, app, nvm },
     api.{ Argument, Context },
+    app.{ App, ModelSaver },
     nvm.ExtensionContext
 
 import
@@ -19,19 +23,19 @@ import
 
 object ExportModel extends WebReporter with CommonWebPrimitive with RequesterGenerator {
 
-  override protected type RequesterCons     = (() => String)
-  override protected def  generateRequester = (hook: () => String) => new ModelStringifier(hook) with Integration
+  override protected type RequesterCons     = (() => InputStream)
+  override protected def  generateRequester = (hook: () => InputStream) => new ModelStringifier(hook) with Integration
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val hook = () => new org.nlogo.app.ModelSaver(org.nlogo.app.App.app).save
+      val hook = () => new ByteArrayInputStream(new ModelSaver(App.app).save.getBytes)
       val (dest, requestMethod, paramMap) = processArguments(args)
       val exporter = generateRequester(hook)
       responseToLogoList(exporter(dest, requestMethod, paramMap))
     }
   }
 
-  protected class ModelStringifier(hook: () => String) extends Requester {
+  protected class ModelStringifier(hook: () => InputStream) extends Requester {
     self: WebIntegration =>
       override protected def generateAddedExportData = Some(hook())
   }

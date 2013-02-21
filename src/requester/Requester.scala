@@ -17,16 +17,19 @@ trait Requester {
   private val DestinationPropKey = "netlogo.export_destination"
   private val CookiePropKey      = "netlogo.web.cookie"
 
-  protected def generateAddedExportData: Option[String] = None
+  protected def generateAddedExportData: Option[InputStream] = None
 
   protected def exportKey = "data"
 
   def apply(dest: String, httpMethod: http.RequestMethod, params: Map[String, String]) : (InputStream, String) = {
-    val myPostKVs   = Map() ++ (generateAddedExportData map (str => Map(exportKey -> Option(constructData(str)))) getOrElse Map())
-    val allPostKVs  = params ++ ((myPostKVs ++ kvAdditionsMap) collect { case (k, Some(v)) => (k, v) })
+    val rawParams   = sink(Map() ++ (generateAddedExportData map (is => Map(exportKey -> Option(constructData(is)))) getOrElse Map()))
+    val strParams   = params ++ sink(kvAdditionsMap)
     val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))
     val destination = destOpt getOrElse(throw new IllegalStateException("No valid destination given!"))
-    http.RequestSender(destination, httpMethod, allPostKVs, Option(System.getProperty(CookiePropKey)))
+    http.RequestSender(destination, httpMethod, strParams, rawParams, Option(System.getProperty(CookiePropKey)))
   }
+
+  private def sink[T, U](map: Map[T, Option[U]]) : Map[T, U] =
+    map collect { case (k, Some(v)) => (k, v) }
 
 }
