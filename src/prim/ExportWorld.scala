@@ -10,7 +10,7 @@ import
 
 import
   org.nlogo.extensions.web.{ requester, util },
-    requester.{ ByteStream, RequesterGenerator, StreamerExporter },
+    requester.{ GZIPStream, RequesterGenerator, StreamerExporter },
     util.{ EnsuranceAgent, Streamer },
       EnsuranceAgent._
 
@@ -21,11 +21,11 @@ import
  * Time: 3:36 PM
  */
 
-// Hooks in and sends an `export-world` to a remote location
+// Hooks in and sends a GZipped `export-world` to a remote location
 object ExportWorld extends WebReporter with CommonWebPrimitive with RequesterGenerator {
 
   override protected type RequesterCons     = ((Streamer) => Unit)
-  override protected def  generateRequester = (hook: (Streamer) => Unit) => new StreamerExporter(hook) with Integration with ByteStream
+  override protected def  generateRequester = (hook: (Streamer) => Unit) => new StreamerExporter(hook) with Integration with GZIPStream
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { case extContext: ExtensionContext =>

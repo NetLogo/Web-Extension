@@ -1,7 +1,12 @@
 package org.nlogo.extensions.web.prim
 
 import
-  java.io.InputStreamReader
+  scala.io.{ Codec, Source }
+
+import
+  java.{ io, util },
+    io.{ ByteArrayInputStream, InputStream, InputStreamReader },
+    util.zip.GZIPInputStream
 
 import
   org.nlogo.{ api, nvm },
@@ -9,8 +14,10 @@ import
     nvm.ExtensionContext
 
 import
-  org.nlogo.extensions.web.util.{ EnsuranceAgent, EventEvaluator },
-    EnsuranceAgent._
+  org.nlogo.extensions.web.{ requester, util => web_util },
+    requester.SimpleRequesterGenerator,
+    web_util.{ EnsuranceAgent, EventEvaluator },
+      EnsuranceAgent._
 
 /**
  * Created with IntelliJ IDEA.
@@ -19,16 +26,19 @@ import
  * Time: 3:42 PM
  */
 
-// A simpler, more-typical syntax for going an `import-world`, which has no need to use any non-standard library
-object ImportWorld extends WebCommand with SimpleWebPrimitive {
+// A simpler, more-typical syntax for doing an `import-world`
+object ImportWorld extends WebCommand with SimpleWebPrimitive with SimpleRequesterGenerator {
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val hook = (reader: InputStreamReader) => {
-        extContext.workspace.importWorld(reader)
-        reader.close()
+      val hook = (stream: InputStream) => {
+        val gis = new GZIPInputStream(stream)
+        extContext.workspace.importWorld(new InputStreamReader(gis))
+        stream.close()
       }
       val (dest) = processArguments(args)
-      EventEvaluator(io.Source.fromURL(dest).reader(), hook)
+      val bytes  = Source.fromURL(dest)(Codec.ISO8859).map(_.toByte).toArray
+      val bais   = new ByteArrayInputStream(bytes)
+      EventEvaluator(bais, hook)
     }
   }
 }
