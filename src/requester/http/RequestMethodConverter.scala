@@ -1,16 +1,16 @@
 package org.nlogo.extensions.web.requester.http
 
 import
-  java.{ net, nio },
+  java.{ io, net, nio },
+    io.InputStream,
     net.URI,
     nio.charset.Charset
 
 import
-  org.apache.http.{ client, message },
-    client.{ entity, methods },
-      entity.{ UrlEncodedFormEntity => URLEntity },
-      methods._,
-    message.{ BasicNameValuePair => KVPair }
+  org.apache.http.{ client, entity },
+    client.methods._,
+    entity.mime.{ content, HttpMultipartMode, MultipartEntity },
+      content.{ InputStreamBody, StringBody }
 
 /**
  * Created with IntelliJ IDEA.
@@ -21,16 +21,21 @@ import
 
 // Some traits for enforcing how a request handles its additional parameters
 sealed trait ParamHandler {
-  def handleParams(paramMap: Map[String, String], encoding: String)
+  def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map())
 }
 
 private trait URLParams extends ParamHandler {
 
   self: HttpRequestBase =>
 
-  override def handleParams(paramMap: Map[String, String], encoding: String) {
+  override def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map()) {
     val encode   = java.net.URLEncoder.encode(_: String, encoding)
-    val queryStr = paramMap map { case (k, v) => s"${encode(k)}=${encode(v)}" } mkString ("?", "&", "")
+    val lazies   = lazyMap mapValues {
+      is =>
+        val scanner  = new java.util.Scanner(is).useDelimiter("\\A")
+        if (scanner.hasNext) scanner.next else ""
+    }
+    val queryStr = (paramMap ++ lazies) map { case (k, v) => s"${encode(k)}=${encode(v)}" } mkString ("?", "&", "")
     setURI(new URI(getURI.toString + queryStr))
   }
 
@@ -40,10 +45,11 @@ private trait EntityParams extends ParamHandler {
 
   self: HttpEntityEnclosingRequestBase =>
 
-  override def handleParams(paramMap: Map[String, String], encoding: String) {
-    import collection.JavaConverters._
-    val javaKVs = (paramMap map { case (key, value) => new KVPair(key, value) } toSeq).asJava
-    setEntity(new URLEntity(javaKVs, Charset.forName(encoding)))
+  override def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map()) {
+    val entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
+    paramMap foreach { case (k, v) => entity.addPart(k, new StringBody(v, "text/plain", Charset.forName("UTF-8"))) }
+    lazyMap  foreach { case (k, v) => entity.addPart(k, new InputStreamBody(v, k)) }
+    setEntity(entity)
   }
 
 }

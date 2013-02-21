@@ -1,7 +1,7 @@
 package org.nlogo.extensions.web.requester
 
 import
-  java.io.{ ByteArrayOutputStream, UnsupportedEncodingException }
+  java.io.{ ByteArrayInputStream, ByteArrayOutputStream, InputStream, UnsupportedEncodingException }
 
 import
   org.nlogo.extensions.web.util.{ EventEvaluator, Streamer }
@@ -17,15 +17,13 @@ class StreamerExporter(hook: (Streamer) => Unit) extends Requester {
 
   self: WebIntegration with OutStream =>
 
-  private val DefaultByteEncoding = "UTF-8"
-
-  override protected def generateAddedExportData : Option[String] = {
+  override protected def generateAddedExportData : Option[InputStream] = {
 
     val outputStream = new ByteArrayOutputStream()
 
     try {
       EventEvaluator(convertStream(outputStream), hook)
-      Option(outputStream.toString(DefaultByteEncoding))
+      Option(new ByteArrayInputStream(outputStream.toByteArray))
     }
     catch {
       case ex: UnsupportedEncodingException =>
