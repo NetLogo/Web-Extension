@@ -76,7 +76,7 @@ trait WebPrimitive {
   protected def carefully[T](f: => T) : T = {
     try f
     catch {
-      case ex: Exception => throw new org.nlogo.api.ExtensionException(s"${ex.getMessage}\n\n${ex.getStackTraceString}", ex)
+      case ex: Exception => throw new org.nlogo.api.ExtensionException("%s\n\n%s".format(ex.getMessage, ex.getStackTraceString), ex)
     }
   }
 
