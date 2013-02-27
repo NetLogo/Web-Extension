@@ -19,6 +19,7 @@ class WebExtension extends DefaultClassManager {
     primitiveManager.addPrimitive("import-world",        ImportWorld)
     primitiveManager.addPrimitive("import-world-fine",   ImportWorldFine)
     primitiveManager.addPrimitive("make-request",        MakeRequest)
+    primitiveManager.addPrimitive("upload-file",         UploadFile)
   }
 }
 
