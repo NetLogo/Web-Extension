@@ -4,12 +4,9 @@ This extension allows you to hook into NetLogo functionality for various forms o
 
 ## Building
 
-Use the NETLOGO environment variable to tell the Makefile which NetLogoLite.jar to compile against.  For example:
+Run `./sbt package` to build the extension.
 
-    NETLOGO=/Applications/NetLogo\\\ 5.0
-    make
-
-If compilation succeeds, `web.jar` will be created.
+If the build succeeds, `web.jar` will be created.
 
 ## Terms of Use
 
