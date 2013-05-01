@@ -2,6 +2,8 @@
 
 This extension allows you to hook into NetLogo functionality for various forms of output and export data from NetLogo via HTTP POST.
 
+__Requires NetLogo 5.0.4 or greater.__
+
 ## Building
 
 Run `./sbt package` to build the extension.
