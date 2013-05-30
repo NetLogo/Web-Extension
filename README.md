@@ -1,6 +1,13 @@
 # NetLogo Web Extension
 
-This extension allows you to hook into NetLogo functionality for various forms of output and export data from NetLogo via HTTP POST.
+This extension allows you to directly import or export many different types of data while within NetLogo, including images and `export-world` states.  Please see the [documentation](https://github.com/NetLogo/Web-Extension/wiki/Primitives) for an exhaustive listing of the types of data that can be leveraged.
+
+Despite the many different things it _can_ do, the extension does **not** currently support any of the following:
+* OAuth
+* SSL
+* HTTPS
+* HTTP header customization
+* Web Sockets
 
 __Requires NetLogo 5.0.4 or greater.__
 
