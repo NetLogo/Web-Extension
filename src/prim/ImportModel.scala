@@ -30,8 +30,7 @@ object ImportModel extends WebCommand with SimpleWebPrimitive {
       extContext =>
         val (dest)         = processArguments(args)
         val modelNameRegex = """[^/]+$""".r
-        val modelNameMatch = modelNameRegex.findFirstMatchIn( dest ).getOrElse( throw new ExtensionException("Malformed Model URL: " + dest) )
-        val modelName      = modelNameMatch.matched
+        val modelName      = modelNameRegex.findFirstIn( dest ).getOrElse( throw new ExtensionException("Malformed Model URL: '" + dest + "'") )
         val tempDirName    = System.getProperty("java.io.tmpdir")
         using(new BufferedInputStream( new URL(dest).openStream() )) {
           closeable =>
