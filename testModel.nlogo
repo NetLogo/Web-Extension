@@ -51,6 +51,23 @@ NIL
 NIL
 1
 
+BUTTON
+62
+221
+165
+254
+try (will fail)
+web:import-model \"http://abmplus.tech.northwestern.edu:9001/assets/misc/models/\"
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
 @#$#@#$#@
 ## WHAT IS IT?
 
