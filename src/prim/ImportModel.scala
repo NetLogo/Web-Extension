@@ -49,7 +49,7 @@ object ImportModel extends WebCommand with SimpleWebPrimitive {
   def invokeLater(body: => Unit) {
    javax.swing.SwingUtilities.invokeLater(new Runnable() {
        override def run() { body }
-     })
-   }
+   })
+  }
 
 }
