@@ -4,14 +4,10 @@ import
   java.net.URL
 
 import
-  org.nlogo.{ api, nvm, window },
-    api.{ModelType, ExtensionException, Argument, Context},
-      nvm.ExtensionContext,
-      window.GUIWorkspace
+  org.nlogo.api.{ModelType, ExtensionException, Argument, Context}
 
 import
-  org.nlogo.extensions.web.util.{FileWriter, EnsuranceAgent, using},
-    EnsuranceAgent._
+  org.nlogo.extensions.web.util.{FileWriter, using}
 
 import
   java.io.BufferedInputStream
