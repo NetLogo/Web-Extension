@@ -1,46 +1,48 @@
 package org.nlogo.extensions.web.prim
 
 import
-  java.net.URL
+  java.{ io, net },
+    io.{ BufferedInputStream, File },
+    net.URL
 
 import
-  org.nlogo.api.{ModelType, ExtensionException, Argument, Context}
-
-import
-  org.nlogo.extensions.web.util.{FileWriter, using}
-
-import
-  java.io.BufferedInputStream
+  org.nlogo.{ api, extensions },
+    api.{ Argument, Context, ExtensionException, ModelType },
+    extensions.web.util.{ FileWriter, doLater, using }
 
 /**
  * Created by IntelliJ IDEA.
  * User: cbrady
  * Date: 5/29/13
  * Time: 1:22 PM
- * To change this template use File | Settings | File Templates.
  */
 object ImportModel extends WebCommand with SimpleWebPrimitive {
 
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
-    val (dest)         = processArguments(args)
-    val modelNameRegex = """[^/]+$""".r
-    val modelName      = modelNameRegex.findFirstIn( dest ).getOrElse( throw new ExtensionException("Malformed Model URL: '" + dest + "'") )
-    val tempDirName    = System.getProperty("java.io.tmpdir")
-    using(new BufferedInputStream( new URL(dest).openStream() )) {
-      closeable =>
-        val destFile = new java.io.File(tempDirName + modelName)
-        if (destFile.exists()) destFile.delete()
-        FileWriter(closeable, tempDirName, modelName)
+    val (dest) = processArguments(args)
+    val path   = generateFilePath(dest)
+    obtainModelFile(dest, path)
+    doLater {
+      org.nlogo.app.App.app.fileMenu.openFromPath(path, ModelType.Normal)
     }
-    invokeLater{ {
-      org.nlogo.app.App.app.fileMenu.openFromPath(tempDirName + modelName, ModelType.Normal)
-    } }
   }
 
-  def invokeLater(body: => Unit) {
-   javax.swing.SwingUtilities.invokeLater(new Runnable() {
-       override def run() { body }
-   })
+  private def generateFilePath(url: String) : String = {
+    val tempDirName    = System.getProperty("java.io.tmpdir")
+    val sep            = File.separator
+    val modelNameRegex = """[^/]+$""".r
+    val modelName      = modelNameRegex.findFirstIn(url).getOrElse(throw new ExtensionException("Malformed Model URL: '%s'".format(url)))
+    tempDirName + sep + modelName
+  }
+
+  private def obtainModelFile(url: String, localPath: String) {
+    using(new BufferedInputStream(new URL(url).openStream())) {
+      closeable =>
+        val destFile = new File(localPath)
+        if (destFile.exists())
+          destFile.delete()
+        FileWriter(closeable, localPath)
+    }
   }
 
 }
