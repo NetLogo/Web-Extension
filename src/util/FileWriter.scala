@@ -17,7 +17,7 @@ object FileWriter {
 
   private val DefaultBufferSize = 1024
 
-  def apply(is: InputStream, filepath: String, filename: String) {
+  def apply(is: InputStream, filepath: String, filename: String = "") {
 
     val truePath = if (new File(filepath).isDirectory) filepath + File.separator + filename else filepath
     val file     = new File(truePath)
