@@ -17,37 +17,9 @@ libraryDependencies ++= Seq(
   "log4j" % "log4j" % "1.2.17"
 )
 
-artifactName := { (_, _, _) => "web.jar" }
+name := "web"
 
-packageOptions := Seq(
-  Package.ManifestAttributes(
-    ("Extension-Name", "web"),
-    ("Class-Manager", "org.nlogo.extensions.web.WebExtension"),
-    ("NetLogo-Extension-API-Version", "5.0")))
+NetLogoExtension.settings
 
-packageBin in Compile <<= (packageBin in Compile, baseDirectory, streams) map {
-  (jar, base, s) =>
-    IO.copyFile(jar, base / "web.jar")
-    Process("pack200 --modification-time=latest --effort=9 --strip-debug " +
-            "--no-keep-file-order --unknown-attribute=strip " +
-            "web.jar.pack.gz web.jar").!!
-    if(Process("git diff --quiet --exit-code HEAD").! == 0) {
-      Process("git archive -o web.zip --prefix=web/ HEAD").!!
-      IO.createDirectory(base / "web")
-      IO.copyFile(base / "web.jar", base / "web" / "web.jar")
-      IO.copyFile(base / "web.jar.pack.gz", base / "web" / "web.jar.pack.gz")
-      Process("zip web.zip web/web.jar web/web.jar.pack.gz").!!
-      IO.delete(base / "web")
-    }
-    else {
-      s.log.warn("working tree not clean; no zip archive made")
-      IO.delete(base / "web.zip")
-    }
-    jar
-  }
-
-cleanFiles <++= baseDirectory { base =>
-  Seq(base / "web.jar",
-      base / "web.jar.pack.gz",
-      base / "web.zip") }
+NetLogoExtension.classManager := "org.nlogo.extensions.web.WebExtension"
 

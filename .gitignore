@@ -2,6 +2,5 @@
 *.jar
 /classes
 .DS_Store
-/project
-/target
+target/
 web.zip
