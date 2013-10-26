@@ -44,7 +44,7 @@ object RequestSender {
 
     try {
       val (responseStream, statusCode) = prepareResponse(generateClient.execute(request))
-      Option(System.getProperty("netlogo.web.debugging")) foreach (_ => println(responseStream))
+      Option(System.getProperty("netlogo.web.debugging")) orElse Option(System.getProperty("jnlp.netlogo.web.debugging")) foreach (_ => println(responseStream))
       (responseStream, statusCode)
     }
     catch {
