@@ -14,8 +14,10 @@ trait Requester {
 
   self: WebIntegration =>
 
-  private val DestinationPropKey = "netlogo.export_destination"
-  private val CookiePropKey      = "netlogo.web.cookie"
+  private val isWebStart = System.getProperty("javawebstart.version", null) != null
+
+  private val DestinationPropKey = (if (isWebStart) "jnlp." else "") + "netlogo.export_destination"
+  private val CookiePropKey      = (if (isWebStart) "jnlp." else "") + "netlogo.web.cookie"
 
   protected def generateAddedExportData: Option[InputStream] = None
 
