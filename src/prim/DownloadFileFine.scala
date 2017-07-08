@@ -1,8 +1,11 @@
 package org.nlogo.extensions.web.prim
 
 import
-  org.nlogo.api.{ Argument, Context, ExtensionException, Syntax },
-    Syntax.{ ListType, StringType }
+  org.nlogo.api.{ Argument, Context, ExtensionException }
+
+import 
+  org.nlogo.core.{Syntax},
+	Syntax.{ ListType, StringType }
 
 import
   org.nlogo.extensions.web.{ requester, util },
@@ -19,7 +22,7 @@ import
 object DownloadFileFine extends WebCommand with SimpleRequesterGenerator {
 
   override protected type ArgsTuple      = (String, requester.http.RequestMethod, Map[String, String], String)
-  override protected def  primArgsSyntax = Array(StringType, StringType, ListType, StringType)
+  override protected def  primArgsSyntax = List(StringType, StringType, ListType, StringType)
   override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
     val dest      = args(0).getString
     val reqMethod = httpMethodify(args(1)) getOrElse (throw new ExtensionException("Invalid HTTP method name supplied."))

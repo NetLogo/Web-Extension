@@ -1,9 +1,12 @@
 package org.nlogo.extensions.web.prim
 
 import
-  org.nlogo.api.{ Argument, Context, Syntax },
-    Syntax.StringType
-
+  org.nlogo.api.{ Argument, Context }
+    
+import 
+  org.nlogo.core.{Syntax},
+	Syntax.StringType
+	
 import
   java.{ io, net },
     io.BufferedInputStream,
@@ -22,7 +25,7 @@ import
 object DownloadFile extends WebCommand {
 
   override protected type ArgsTuple      = (String, String)
-  override protected def  primArgsSyntax = Array(StringType, StringType)
+  override protected def  primArgsSyntax = List(StringType, StringType)
   override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
     val dest     = args(0).getString
     val filepath = args(1).getString

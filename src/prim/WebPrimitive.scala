@@ -4,8 +4,11 @@ import
   java.io.InputStream
 
 import
-  org.nlogo.api.{ Argument, DefaultCommand, DefaultReporter, Context, ExtensionException, LogoList, Primitive, Syntax },
-    Syntax._
+  org.nlogo.api.{ Argument, Command, Reporter, Context, ExtensionException }
+
+import 
+  org.nlogo.core.{Syntax, LogoList, Primitive},
+	Syntax._
 
 import
   org.nlogo.extensions.web.requester.http.RequestMethod
@@ -24,7 +27,7 @@ trait WebPrimitive {
   override def getAgentClassString = "O---"
 
   protected type ArgsTuple
-  protected def  primArgsSyntax: Array[Int]
+  protected def  primArgsSyntax: List[Int]
   protected def  processArguments(args: Array[Argument]) : ArgsTuple
 
   protected def defaultMap = Map[String, String]()
@@ -107,13 +110,13 @@ trait SimpleWebPrimitive {
 import DummyImplicit.dummyImplicit
 
 // Using `DummyImplicit` so that the new and old `perform`/`report` methods have distinct signatures after erasure --JAB (10/22/12)
-abstract class WebCommand extends DefaultCommand with WebPrimitive {
+abstract class WebCommand extends Command with WebPrimitive {
   override def getSyntax = commandSyntax(primArgsSyntax)
   override def perform(args: Array[Argument], context: Context) { carefully(perform(args)(context, dummyImplicit)) }
   /*new!*/ def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit)
 }
 
-abstract class WebReporter extends DefaultReporter with WebPrimitive {
+abstract class WebReporter extends Reporter with WebPrimitive {
   override def getSyntax = reporterSyntax(primArgsSyntax, ListType)
   override def report(args: Array[Argument], context: Context) : AnyRef = { carefully(report(args)(context, dummyImplicit)) }
   /*new!*/ def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef

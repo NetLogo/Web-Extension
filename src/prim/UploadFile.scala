@@ -4,8 +4,11 @@ import
   java.io.{ FileInputStream, InputStream }
 
 import
-  org.nlogo.api.{ Argument, Context, ExtensionException, Syntax },
-    Syntax._
+  org.nlogo.api.{ Argument, Context, ExtensionException }
+
+import 
+  org.nlogo.core.{Syntax},
+	Syntax._
 
 import
   org.nlogo.extensions.web.requester.{ http, Requester, RequesterGenerator, WebIntegration },
@@ -21,7 +24,7 @@ import
 object UploadFile extends WebReporter with RequesterGenerator {
 
   override protected type ArgsTuple      = (String, RequestMethod, Map[String, String], String)
-  override protected def  primArgsSyntax = Array(StringType, StringType, ListType, StringType)
+  override protected def  primArgsSyntax = List(StringType, StringType, ListType, StringType)
   override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
     val dest      = args(0).getString
     val reqMethod = httpMethodify(args(1)) getOrElse (throw new ExtensionException("Invalid HTTP method name supplied."))
