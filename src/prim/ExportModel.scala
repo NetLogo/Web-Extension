@@ -31,7 +31,7 @@ object ExportModel extends WebReporter with CommonWebPrimitive with RequesterGen
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
 	  val hook = { () =>
-	  	val model = new ByteArrayInputStream(new ModelSaver(App.app, null).currentModelInCurrentVersion
+	  	val model = new ByteArrayInputStream(new ModelSaver(App.app, null).currentModelInCurrentVersion)
 	  	val modelBytes = basicLoader.sourceString(model, "nlogo").get.getBytes // this may throw an exception if the model couldn't be saved
 	  	new ByteArrayInputStream(modelBytes)
 	  }
