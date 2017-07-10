@@ -9,6 +9,8 @@ import
     app.{ ModelSaver },  //App, 
     nvm.ExtensionContext
 
+import org.nlogo.fileformat.basicLoader
+
 import
   org.nlogo.extensions.web.{ requester, util },
     requester.{ Requester, RequesterGenerator, WebIntegration },
@@ -28,7 +30,7 @@ object ExportModel extends WebReporter with CommonWebPrimitive with RequesterGen
 
   override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
     ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val hook = () => new ByteArrayInputStream(new ModelSaver(App.app).save.getBytes)
+	  val hook = () => new ByteArrayInputStream(new ModelSaver(App.app).save.getBytes)
       val (dest, requestMethod, paramMap) = processArguments(args)
       val exporter = generateRequester(hook)
       responseToLogoList(exporter(dest, requestMethod, paramMap))

@@ -32,7 +32,8 @@ object ImportWorldFine extends WebCommand with CommonWebPrimitive with SimpleReq
         stream.close()
       }
       val (dest, requestMethod, paramMap) = processArguments(args)
-      val (response, _) = generateRequester(hook)(dest, requestMethod, paramMap) // Do not use `processResponse` here; response must be closed in hook
+      val (response, _) = generateRequester(())(dest, requestMethod, paramMap)
+	  //val (response, _) = generateRequester(hook)(dest, requestMethod, paramMap) // Do not use `processResponse` here; response must be closed in hook
       EventEvaluator(response, hook)
     }
   }
