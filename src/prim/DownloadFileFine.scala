@@ -34,7 +34,7 @@ object DownloadFileFine extends WebCommand with SimpleRequesterGenerator {
   override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
     val (dest, reqMethod, params, filepath) = processArguments(args)
     val filename = new java.io.File(filepath).getName
-    processResponse(generateRequester()(dest, reqMethod, params)) {
+    processResponse(generateRequester(())(dest, reqMethod, params)) {
       case (response, _) => FileWriter(response, filepath, filename)
     }
   }

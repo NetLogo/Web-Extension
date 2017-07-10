@@ -117,7 +117,7 @@ abstract class WebCommand extends Command with WebPrimitive {
 }
 
 abstract class WebReporter extends Reporter with WebPrimitive {
-  override def getSyntax = reporterSyntax(primArgsSyntax, ListType)
+  override def getSyntax = reporterSyntax(right = primArgsSyntax.toList, ret = ListType)
   override def report(args: Array[Argument], context: Context) : AnyRef = { carefully(report(args)(context, dummyImplicit)) }
   /*new!*/ def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef
 }

@@ -23,7 +23,7 @@ object ImportModel extends WebCommand with SimpleWebPrimitive {
     val path   = generateFilePath(dest)
     obtainModelFile(dest, path)
     doLater {
-      org.nlogo.app.App.app.fileMenu.openFromPath(path, ModelType.Normal)
+      org.nlogo.app.App.app.fileManager.openFromPath(path, ModelType.Normal)
     }
   }
 
