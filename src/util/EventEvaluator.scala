@@ -13,11 +13,11 @@ import
     util.Timeout
 
 import
-  org.nlogo.{ api, awt, nvm, swing },
+  org.nlogo.{ api, awt, nvm }, //, swing },
     api.ReporterRunnable,
     awt.EventQueue,
-    nvm.Workspace,
-    swing.Implicits
+    nvm.Workspace //,
+    //swing.Implicits
 
 /**
  * Created with IntelliJ IDEA.
@@ -38,7 +38,7 @@ object EventEvaluator {
   private val system = ActorSystem("LoggingSystem")
 
   protected class EventEvaluationActor[T, U](stream: T, func: (T) => U) extends Actor {
-    import Implicits.thunk2runnable
+    //import Implicits.thunk2runnable
     override def receive = {
       case Evaluate =>
         EventQueue.invokeLater {

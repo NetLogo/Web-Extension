@@ -4,7 +4,7 @@ import
   org.nlogo.api.{ Argument, Context }
 
 import
-  org.nlogo.extensions.web.{ requester, util },
+  org.nlogo.extensions.web.{ requester },      //, util },
     requester.{ Requester, RequesterGenerator }
 
 /**

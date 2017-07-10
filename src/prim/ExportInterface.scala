@@ -45,7 +45,7 @@ object ExportInterface extends WebReporter with CommonWebPrimitive with Requeste
           new ByteArrayInputStream(Images.paintToImage(component).asBase64.getBytes)
       }
       val (dest, requestMethod, paramMap) = processArguments(args)
-      val exporter = generateRequester()( hook, extContext.workspace)
+      val exporter = generateRequester(hook, extContext.workspace)
       responseToLogoList(exporter(dest, requestMethod, paramMap))
     }
   }

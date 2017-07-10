@@ -6,7 +6,7 @@ import
 import
   org.nlogo. { api, app, nvm },
     api.{ Argument, Context },
-    app.{ App, ModelSaver },
+    app.{ ModelSaver },  //App, 
     nvm.ExtensionContext
 
 import
