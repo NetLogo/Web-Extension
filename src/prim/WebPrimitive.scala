@@ -24,7 +24,7 @@ trait WebPrimitive {
 
   self: Primitive =>
 
-  override def getAgentClassString = "O---"
+  //override def getAgentClassString = "O---"
 
   protected type ArgsTuple
   protected def  primArgsSyntax: List[Int]
@@ -88,7 +88,7 @@ trait WebPrimitive {
 trait CommonWebPrimitive {
   self: WebPrimitive =>
     override protected type ArgsTuple      = (String, RequestMethod, Map[String, String])
-    override protected def  primArgsSyntax = Array(StringType, StringType, ListType)
+    override protected def  primArgsSyntax = List(StringType, StringType, ListType)
     override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
       val dest      = args(0).getString
       val reqMethod = httpMethodify(args(1)) getOrElse (throw new ExtensionException("Invalid HTTP method name supplied."))
@@ -100,7 +100,7 @@ trait CommonWebPrimitive {
 trait SimpleWebPrimitive {
   self: WebPrimitive =>
     override protected type ArgsTuple      = (String)
-    override protected def  primArgsSyntax = Array(StringType)
+    override protected def  primArgsSyntax = List(StringType)
     override protected def  processArguments(args: Array[Argument]) : ArgsTuple = {
       val dest = args(0).getString
       (dest)
