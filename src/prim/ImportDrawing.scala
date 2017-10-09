@@ -1,34 +1,56 @@
 package org.nlogo.extensions.web.prim
 
-import
-  java.net.URL
+import java.net.URL
 
-import
-  org.nlogo.{ api, nvm, window },
-    api.{ Argument, Context },
-    nvm.ExtensionContext,
-    window.GUIWorkspace
+import org.nlogo.api.{ Argument, Command, Context, ExtensionException, Workspace }
+import org.nlogo.core.Syntax.{ commandSyntax, StringType }
+import org.nlogo.nvm.ExtensionContext
+import org.nlogo.window.GUIWorkspace
 
-import
-  org.nlogo.extensions.web.util.{ EnsuranceAgent, using },
-    EnsuranceAgent._
+import org.nlogo.extensions.web.requester.SimpleRequesterGenerator
+import org.nlogo.extensions.web.util.using
 
-/**
- * Created with IntelliJ IDEA.
- * User: Jason
- * Date: 10/19/12
- * Time: 5:04 PM
- */
+object ImportDrawing extends WebPrimitive with Command {
 
-object ImportDrawing extends WebCommand with SimpleWebPrimitive {
-  override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
-    ensuringExtensionContext { (extContext: ExtensionContext) =>
-      ensuringGUIWorkspace(extContext.workspace) { (guiWS: GUIWorkspace) =>
-        val (dest) = processArguments(args)
-        using(new URL(dest).openStream()) {
-          guiWS.importDrawing(_)
-        }
+  override def getSyntax =
+    commandSyntax(List(StringType))
+
+  override def perform(args: Array[Argument], context: Context): Unit = carefully {
+    EnsuranceAgent.ensuringGUIWorkspace(context.workspace) { (guiWS: GUIWorkspace) =>
+      val dest = args(0).getString
+      using(new URL(dest).openStream()) {
+        guiWS.importDrawing(_)
       }
+    }
+  }
+
+}
+
+object ImportDrawingFine extends WebPrimitive with Command with SimpleRequesterGenerator {
+
+  override def getSyntax =
+    commandSyntax(List(StringType))
+
+  override def perform(args: Array[Argument], context: Context): Unit = carefully {
+    EnsuranceAgent.ensuringGUIWorkspace(context.workspace) { (guiWS: GUIWorkspace) =>
+      val dest      = args(0).getString
+      val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
+      val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
+      processResponse(generateRequester(())(dest, reqMethod, paramMap)) {
+        case (response, _) => guiWS.importDrawing(response)
+      }
+    }
+  }
+
+}
+
+private object EnsuranceAgent {
+  def ensuringGUIWorkspace[T](ws: Workspace)(f: (GUIWorkspace) => T): T = {
+    ws match {
+      case guiWS: GUIWorkspace => f(guiWS)
+      case other => throw new UnsupportedOperationException(
+        s"Cannot use this primitive from any type of workspace by a `GUIWorkspace`; you're using a ${other.getClass.getName}."
+      )
     }
   }
 }

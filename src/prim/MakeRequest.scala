@@ -1,23 +1,22 @@
 package org.nlogo.extensions.web.prim
 
-import
-  org.nlogo.api.{ Argument, Context }
+import org.nlogo.api.{ Argument, Command, Context, ExtensionException, Reporter }
+import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
+import org.nlogo.extensions.web.requester.{ Requester, RequesterGenerator }
 
-import
-  org.nlogo.extensions.web.{ requester },      //, util },
-    requester.{ Requester, RequesterGenerator }
+object MakeRequest extends WebPrimitive with Reporter with RequesterGenerator {
 
-/**
- * Created with IntelliJ IDEA.
- * User: Jason
- * Date: 10/19/12
- * Time: 1:32 PM
- */
-
-object MakeRequest extends WebReporter with CommonWebPrimitive with RequesterGenerator {
   override protected type RequesterCons     = (Unit)
   override protected def  generateRequester = (_: Unit) => new Requester with Integration
-  override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
-    (generateRequester(()).apply _).tupled((processArguments(args))) match { case x => responseToLogoList(x) }
+
+  override def getSyntax =
+    reporterSyntax(right = List(StringType, StringType, ListType), ret = ListType)
+
+  override def report(args: Array[Argument], context: Context): AnyRef = carefully {
+    val dest      = args(0).getString
+    val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
+    val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
+    responseToLogoList(generateRequester(())(dest, reqMethod, paramMap))
   }
+
 }

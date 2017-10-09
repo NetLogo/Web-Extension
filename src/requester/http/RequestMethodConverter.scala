@@ -1,34 +1,23 @@
 package org.nlogo.extensions.web.requester.http
 
-import
-  java.{ io, net, nio },
-    io.InputStream,
-    net.URI,
-    nio.charset.Charset
+import java.io.InputStream
+import java.net.URI
+import java.nio.charset.Charset
 
-import
-  org.apache.http.{ client, entity },
-    client.methods._,
-    entity.mime.{ content, HttpMultipartMode, MultipartEntity },
-      content.{ InputStreamBody, StringBody }
-
-/**
- * Created with IntelliJ IDEA.
- * User: Jason
- * Date: 10/18/12
- * Time: 2:50 PM
- */
+import org.apache.http.client.methods._
+import org.apache.http.entity.mime.{ HttpMultipartMode, MultipartEntity }
+import org.apache.http.entity.mime.content.{ InputStreamBody, StringBody }
 
 // Some traits for enforcing how a request handles its additional parameters
 sealed trait ParamHandler {
-  def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map())
+  def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map()): Unit
 }
 
 private trait URLParams extends ParamHandler {
 
   self: HttpRequestBase =>
 
-  override def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map()) {
+  override def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map()): Unit = {
     val encode   = java.net.URLEncoder.encode(_: String, encoding)
     val lazies   = lazyMap mapValues {
       is =>
@@ -45,7 +34,7 @@ private trait EntityParams extends ParamHandler {
 
   self: HttpEntityEnclosingRequestBase =>
 
-  override def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map()) {
+  override def handleParams(paramMap: Map[String, String], encoding: String, lazyMap: Map[String, InputStream] = Map()): Unit = {
     val entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE)
     paramMap foreach { case (k, v) => entity.addPart(k, new StringBody(v, "text/plain", Charset.forName("UTF-8"))) }
     lazyMap  foreach { case (k, v) => entity.addPart(k, new InputStreamBody(v, k)) }
@@ -57,11 +46,11 @@ private trait EntityParams extends ParamHandler {
 
 
 sealed trait RequestMethodConverter[T] {
-  def apply(method: RequestMethod) : T
+  def apply(method: RequestMethod): T
 }
 
 object ToApacheConverter extends RequestMethodConverter[HttpRequestBase with ParamHandler] {
-  def apply(method: RequestMethod) : HttpRequestBase with ParamHandler = method match {
+  def apply(method: RequestMethod): HttpRequestBase with ParamHandler = method match {
     case Delete  => new HttpDelete  with URLParams
     case Get     => new HttpGet     with URLParams
     case Head    => new HttpHead    with URLParams
@@ -72,4 +61,3 @@ object ToApacheConverter extends RequestMethodConverter[HttpRequestBase with Par
     case Trace   => new HttpTrace   with URLParams
   }
 }
-

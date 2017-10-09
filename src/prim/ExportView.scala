@@ -1,44 +1,33 @@
 package org.nlogo.extensions.web.prim
 
-import
-  java.io.{ ByteArrayInputStream, InputStream }
+import java.io.{ ByteArrayInputStream, InputStream }
 
-import
-  org.nlogo.{ api, nvm },
-    api.{ Argument, Context },
-    nvm.ExtensionContext
+import org.nlogo.api.{ Argument, Context, ExtensionException, Reporter }
+import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
+import org.nlogo.nvm.ExtensionContext
 
-import
-  org.nlogo.extensions.web.{ requester, util },
-    requester.{ Requester, RequesterGenerator, WebIntegration },
-    util.{ EnsuranceAgent, ImageToBase64 },
-      EnsuranceAgent._,
-      ImageToBase64._
+import org.nlogo.extensions.web.requester.{ Requester, RequesterGenerator, WebIntegration }
+import org.nlogo.extensions.web.util.AsBase64
 
-/**
- * Created with IntelliJ IDEA.
- * User: Jason
- * Date: 10/22/12
- * Time: 1:17 PM
- */
+object ExportView extends WebPrimitive with Reporter with RequesterGenerator {
 
-object ExportView extends WebReporter with CommonWebPrimitive with RequesterGenerator {
+  override protected type RequesterCons = () => InputStream
 
-  override protected type RequesterCons     = (() => InputStream)
-  override protected def  generateRequester = (hook: () => InputStream) => new ViewExporter(hook) with Integration
+  override protected def generateRequester =
+    (hook: () => InputStream) =>
+      new Requester with Integration {
+        override protected def generateAddedExportData = Some(hook())
+      }
 
-  override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
-    ensuringExtensionContext { (extContext: ExtensionContext) =>
-      val hook = () => new ByteArrayInputStream(extContext.workspace.exportView.asBase64.getBytes)
-      val (dest, requestMethod, paramMap) = processArguments(args)
-      val exporter = generateRequester(hook)
-      responseToLogoList(exporter(dest, requestMethod, paramMap))
-    }
-  }
+  override def getSyntax =
+    reporterSyntax(right = List(StringType, StringType, ListType), ret = ListType)
 
-  protected class ViewExporter(hook: () => InputStream) extends Requester {
-    self: WebIntegration =>
-      override protected def generateAddedExportData = Some(hook())
+  override def report(args: Array[Argument], context: Context): AnyRef = carefully {
+    val dest      = args(0).getString
+    val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
+    val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
+    val exporter  = generateRequester { () => new ByteArrayInputStream(AsBase64(context.workspace.exportView).getBytes) }
+    responseToLogoList(exporter(dest, reqMethod, paramMap))
   }
 
 }

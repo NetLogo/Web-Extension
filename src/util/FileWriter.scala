@@ -1,23 +1,14 @@
 package org.nlogo.extensions.web.util
 
-import
-  org.nlogo.api.ExtensionException
+import org.nlogo.api.ExtensionException
 
-import
-  java.io.{ File, FileOutputStream, InputStream, IOException }
-
-/**
- * Created with IntelliJ IDEA.
- * User: jason
- * Date: 12/11/12
- * Time: 4:06 PM
- */
+import java.io.{ File, FileOutputStream, InputStream, IOException }
 
 object FileWriter {
 
   private val DefaultBufferSize = 1024
 
-  def apply(is: InputStream, filepath: String, filename: String = "") {
+  def apply(is: InputStream, filepath: String, filename: String = ""): Unit = {
 
     val truePath = if (new File(filepath).isDirectory) filepath + File.separator + filename else filepath
     val file     = new File(truePath)
@@ -38,8 +29,7 @@ object FileWriter {
             fos.write(buff, 0, n)
             n = is.read(buff)
           }
-        }
-        catch {
+        } catch {
           case ex: IOException => throw new ExtensionException("Failed to write file: " + truePath, ex)
         }
       }

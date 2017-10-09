@@ -1,45 +1,32 @@
 package org.nlogo.extensions.web.prim
 
-import
-  java.io.PrintWriter
+import java.io.{ OutputStream, PrintWriter }
 
-import
-  org.nlogo.{ api, nvm },
-    api.{ Argument, Context },
-    nvm.ExtensionContext
+import org.nlogo.api.{ Argument, Context, ExtensionException, Reporter, Workspace }
+import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
+import org.nlogo.nvm.ExtensionContext
 
-import
-  org.nlogo.extensions.web.{ requester, util },
-    requester.{ GZIPStream, RequesterGenerator, StreamerExporter },
-    util.{ EnsuranceAgent, Streamer },
-      EnsuranceAgent._
+import org.nlogo.extensions.web.requester.{ GZIPStream, RequesterGenerator, StreamerExporter }
 
-/**
- * Created with IntelliJ IDEA.
- * User: Jason
- * Date: 10/18/12
- * Time: 3:36 PM
- */
-
-// Hooks in and sends a GZipped `export-world` to a remote location
-object ExportWorld extends WebReporter with CommonWebPrimitive with RequesterGenerator {
+object ExportWorld extends WebPrimitive with Reporter with RequesterGenerator {
 
   override protected type RequesterCons     = ((Streamer) => Unit)
   override protected def  generateRequester = (hook: (Streamer) => Unit) => new StreamerExporter(hook) with Integration with GZIPStream
 
-  override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
-    ensuringExtensionContext { case extContext: ExtensionContext =>
-      val hook = {
-        (stream: Streamer) =>
-          val writer = new PrintWriter(stream)
-          try     extContext.workspace.exportWorld(writer)
-          finally writer.close()
-      }
-      val (dest, requestMethod, paramMap) = processArguments(args)
-      val exporter = generateRequester(hook)
-      responseToLogoList(exporter(dest, requestMethod, paramMap))
+  override def getSyntax =
+    reporterSyntax(right = List(StringType, StringType, ListType), ret = ListType)
+
+  override def report(args: Array[Argument], context: Context): AnyRef = carefully {
+    val dest      = args(0).getString
+    val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
+    val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
+    val exporter  = generateRequester {
+      (stream: OutputStream) =>
+        val writer = new PrintWriter(stream)
+        try context.workspace.exportWorld(writer)
+        finally writer.close()
     }
+    responseToLogoList(exporter(dest, reqMethod, paramMap))
   }
 
 }
-

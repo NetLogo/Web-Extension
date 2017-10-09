@@ -1,41 +1,36 @@
 package org.nlogo.extensions.web.prim
 
-import
-  java.{ io, net },
-    io.{ BufferedInputStream, File },
-    net.URL
+import java.io.{ BufferedInputStream, File }
+import java.net.URL
 
-import
-  org.nlogo.{ api, extensions },
-    api.{ Argument, Context, ExtensionException, ModelType },
-    extensions.web.util.{ FileWriter, doLater, using }
+import org.nlogo.api.{ Argument, Command, Context, ExtensionException, ModelType }
+import org.nlogo.app.App
+import org.nlogo.core.Syntax.{ commandSyntax, StringType }
+import org.nlogo.extensions.web.util.{ FileWriter, doLater, using }
 
-/**
- * Created by IntelliJ IDEA.
- * User: cbrady
- * Date: 5/29/13
- * Time: 1:22 PM
- */
-object ImportModel extends WebCommand with SimpleWebPrimitive {
+object ImportModel extends WebPrimitive with Command {
 
-  override def perform(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) {
-    val (dest) = processArguments(args)
-    val path   = generateFilePath(dest)
+  override def getSyntax =
+    commandSyntax(List(StringType))
+
+  override def perform(args: Array[Argument], context: Context): Unit = carefully {
+    val dest = args(0).getString
+    val path = generateFilePath(dest)
     obtainModelFile(dest, path)
     doLater {
-      org.nlogo.app.App.app.fileManager.openFromPath(path, ModelType.Normal)
+      App.app.fileManager.openFromPath(path, ModelType.Normal)
     }
   }
 
-  private def generateFilePath(url: String) : String = {
+  private def generateFilePath(url: String): String = {
     val tempDirName    = System.getProperty("java.io.tmpdir")
     val sep            = File.separator
     val modelNameRegex = """[^/]+$""".r
-    val modelName      = modelNameRegex.findFirstIn(url).getOrElse(throw new ExtensionException("Malformed Model URL: '%s'".format(url)))
-    tempDirName + sep + modelName
+    val modelName      = modelNameRegex.findFirstIn(url).getOrElse(throw new ExtensionException(s"Malformed Model URL: '$url'"))
+    s"$tempDirName$sep$modelName"
   }
 
-  private def obtainModelFile(url: String, localPath: String) {
+  private def obtainModelFile(url: String, localPath: String): Unit = {
     using(new BufferedInputStream(new URL(url).openStream())) {
       closeable =>
         val destFile = new File(localPath)

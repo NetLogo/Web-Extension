@@ -1,51 +1,40 @@
 package org.nlogo.extensions.web.prim
 
-import
-  java.io.{ ByteArrayInputStream, InputStream }
+import java.io.{ ByteArrayInputStream, InputStream }
 
-import
-  org.nlogo. { api, app, nvm },
-    api.{ Argument, Context },
-    app.{ App, ModelSaver },  
-    nvm.ExtensionContext
+import org.nlogo.api.{ Argument, Context, ExtensionException, Reporter }
+import org.nlogo.app.{ App, ModelSaver }
+import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
+import org.nlogo.nvm.ExtensionContext
 
 import org.nlogo.fileformat.basicLoader
 
-import
-  org.nlogo.extensions.web.{ requester, util },
-    requester.{ Requester, RequesterGenerator, WebIntegration },
-    util.EnsuranceAgent._
+import org.nlogo.extensions.web.requester.{ Requester, RequesterGenerator, WebIntegration }
 
-/**
- * Created with IntelliJ IDEA.
- * User: jason
- * Date: 12/14/12
- * Time: 3:44 PM
- */
+object ExportModel extends WebPrimitive with Reporter with RequesterGenerator {
 
-object ExportModel extends WebReporter with CommonWebPrimitive with RequesterGenerator {
+  override protected type RequesterCons = () => InputStream
 
-  override protected type RequesterCons     = (() => InputStream)
-  override protected def  generateRequester = (hook: () => InputStream) => new ModelStringifier(hook) with Integration
+  override protected def generateRequester =
+    (hook: () => InputStream) =>
+      new Requester with Integration {
+        override protected def generateAddedExportData = Some(hook())
+      }
 
-  override def report(args: Array[Argument])(implicit context: Context, ignore: DummyImplicit) : AnyRef = {
-    ensuringExtensionContext { (extContext: ExtensionContext) =>
-	  val hook = { () =>
-	  	val model = new ModelSaver(App.app, null).currentModelInCurrentVersion
-	  	val modelBytes = basicLoader.sourceString(model, "nlogo").get.getBytes // this may throw an exception if the model couldn't be saved
-	  	new ByteArrayInputStream(modelBytes)
-	  }
-	
-	  //val hook = () => new ByteArrayInputStream(new ModelSaver(App.app).save.getBytes)  //replaced by lines above
-      val (dest, requestMethod, paramMap) = processArguments(args)
-      val exporter = generateRequester(hook)
-      responseToLogoList(exporter(dest, requestMethod, paramMap))
+  override def getSyntax =
+    reporterSyntax(right = List(StringType, StringType, ListType), ret = ListType)
+
+  override def report(args: Array[Argument], context: Context): AnyRef = carefully {
+    val dest      = args(0).getString
+    val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
+    val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
+    val exporter  = generateRequester {
+      () =>
+        val model = new ModelSaver(App.app, null).currentModelInCurrentVersion
+        val modelBytes = basicLoader.sourceString(model, "nlogo").get.getBytes // this may throw an exception if the model couldn't be saved
+        new ByteArrayInputStream(modelBytes)
     }
-  }
-
-  protected class ModelStringifier(hook: () => InputStream) extends Requester {
-    self: WebIntegration =>
-      override protected def generateAddedExportData = Some(hook())
+    responseToLogoList(exporter(dest, reqMethod, paramMap))
   }
 
 }
