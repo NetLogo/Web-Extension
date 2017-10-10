@@ -2,9 +2,11 @@ package org.nlogo.extensions.web.requester
 
 import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, InputStream, OutputStream, UnsupportedEncodingException }
 
-import org.nlogo.extensions.web.util.{ EventEvaluator, Streamer }
+import org.nlogo.api.Workspace
 
-class StreamerExporter(hook: (OutputStream) => Unit) extends Requester {
+import org.nlogo.extensions.web.util.nlEvaluate
+
+class StreamerExporter(hook: (OutputStream) => Unit, workspace: Workspace) extends Requester {
 
   self: WebIntegration with OutStream =>
 
@@ -13,7 +15,7 @@ class StreamerExporter(hook: (OutputStream) => Unit) extends Requester {
     val outputStream = new ByteArrayOutputStream()
 
     try {
-      EventEvaluator(convertStream(outputStream))(hook)
+      nlEvaluate(workspace)(convertStream(outputStream))(hook)
       Option(new ByteArrayInputStream(outputStream.toByteArray))
     } catch {
       case ex: UnsupportedEncodingException =>

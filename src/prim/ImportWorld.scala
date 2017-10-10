@@ -10,7 +10,7 @@ import org.nlogo.core.Syntax.{ commandSyntax, StringType }
 import org.nlogo.nvm.ExtensionContext
 
 import org.nlogo.extensions.web.requester.SimpleRequesterGenerator
-import org.nlogo.extensions.web.util.EventEvaluator
+import org.nlogo.extensions.web.util.nlEvaluate
 
 object ImportWorld extends WebPrimitive with Command with SimpleRequesterGenerator {
 
@@ -23,7 +23,7 @@ object ImportWorld extends WebPrimitive with Command with SimpleRequesterGenerat
     val bytes = Source.fromURL(dest)(Codec.ISO8859).map(_.toByte).toArray
     val bais  = new ByteArrayInputStream(bytes)
 
-    EventEvaluator(bais) {
+    nlEvaluate(context.workspace)(bais) {
       (stream: InputStream) =>
         val gis = new GZIPInputStream(stream)
         context.workspace.importWorld(new InputStreamReader(gis))
@@ -46,7 +46,7 @@ object ImportWorldFine extends WebPrimitive with Command with SimpleRequesterGen
     val paramMap      = paramify     (args(2)).getOrElse(Map.empty)
     val (response, _) = generateRequester(())(dest, reqMethod, paramMap)
 
-    EventEvaluator(response) {
+    nlEvaluate(context.workspace)(response) {
       (stream: InputStream) =>
         val gis = new GZIPInputStream(stream)
         context.workspace.importWorld(new InputStreamReader(gis))

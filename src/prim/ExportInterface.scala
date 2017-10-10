@@ -9,7 +9,7 @@ import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
 import org.nlogo.nvm.ExtensionContext
 
 import org.nlogo.extensions.web.requester.{ Requester, RequesterGenerator, WebIntegration }
-import org.nlogo.extensions.web.util.{ AsBase64, EventEvaluator }
+import org.nlogo.extensions.web.util.{ AsBase64, nlEvaluate }
 
 object ExportInterface extends WebPrimitive with Reporter with RequesterGenerator {
 
@@ -20,7 +20,7 @@ object ExportInterface extends WebPrimitive with Reporter with RequesterGenerato
       new Requester with Integration {
         override protected def generateAddedExportData = {
           val (hook, workspace) = hookAndWS
-          Option(EventEvaluator.withinWorkspace(workspace)(())((_: Unit) => hook()))
+          Option(nlEvaluate(workspace)(())((_: Unit) => hook()))
         }
       }
 
