@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web.prim
+package org.nlogo.extensions.web
 
 import java.net.URL
 
@@ -7,13 +7,11 @@ import org.nlogo.core.Syntax.{ commandSyntax, StringType }
 import org.nlogo.nvm.ExtensionContext
 import org.nlogo.window.GUIWorkspace
 
-import org.nlogo.extensions.web.requester.SimpleRequesterGenerator
-import org.nlogo.extensions.web.util.using
+import org.nlogo.extensions.web.requester.{ Requester, SimpleWebIntegration }
 
 object ImportDrawing extends WebPrimitive with Command {
 
-  override def getSyntax =
-    commandSyntax(List(StringType))
+  override def getSyntax = commandSyntax(List(StringType))
 
   override def perform(args: Array[Argument], context: Context): Unit = carefully {
     EnsuranceAgent.ensuringGUIWorkspace(context.workspace) { (guiWS: GUIWorkspace) =>
@@ -26,17 +24,16 @@ object ImportDrawing extends WebPrimitive with Command {
 
 }
 
-object ImportDrawingFine extends WebPrimitive with Command with SimpleRequesterGenerator {
+object ImportDrawingFine extends WebPrimitive with Command {
 
-  override def getSyntax =
-    commandSyntax(List(StringType))
+  override def getSyntax = commandSyntax(List(StringType))
 
   override def perform(args: Array[Argument], context: Context): Unit = carefully {
     EnsuranceAgent.ensuringGUIWorkspace(context.workspace) { (guiWS: GUIWorkspace) =>
       val dest      = args(0).getString
       val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
       val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
-      processResponse(generateRequester(())(dest, reqMethod, paramMap)) {
+      processResponse((new Requester with SimpleWebIntegration)(dest, reqMethod, paramMap)) {
         case (response, _) => guiWS.importDrawing(response)
       }
     }
@@ -47,10 +44,11 @@ object ImportDrawingFine extends WebPrimitive with Command with SimpleRequesterG
 private object EnsuranceAgent {
   def ensuringGUIWorkspace[T](ws: Workspace)(f: (GUIWorkspace) => T): T = {
     ws match {
-      case guiWS: GUIWorkspace => f(guiWS)
-      case other => throw new UnsupportedOperationException(
-        s"Cannot use this primitive from any type of workspace by a `GUIWorkspace`; you're using a ${other.getClass.getName}."
-      )
+      case guiWS: GUIWorkspace =>
+        f(guiWS)
+      case other =>
+        val message = s"Cannot use this primitive from any type of workspace by a `GUIWorkspace`; you're using a ${other.getClass.getName}."
+        throw new UnsupportedOperationException(message)
     }
   }
 }

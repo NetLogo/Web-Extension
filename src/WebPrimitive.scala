@@ -1,6 +1,11 @@
-package org.nlogo.extensions.web.prim
+package org.nlogo.extensions.web
 
-import java.io.InputStream
+import java.awt.image.BufferedImage
+import java.io.{ ByteArrayOutputStream, InputStream, OutputStream }
+
+import javax.imageio.ImageIO
+
+import org.apache.commons.codec.binary.Base64OutputStream
 
 import scala.io.Source
 import scala.util.Try
@@ -61,6 +66,18 @@ trait WebPrimitive {
     try f
     catch {
       case ex: Exception => throw new ExtensionException(s"${ex.getMessage}\n\n${ex.getStackTrace}", ex)
+    }
+  }
+
+  protected def using[A <: { def close() }, B](stream: A)(f: A => B): B =
+    try { f(stream) } finally { stream.close() }
+
+  protected object AsBase64 {
+    def apply(image: BufferedImage): String = {
+      val os   = new ByteArrayOutputStream()
+      val os64 = new Base64OutputStream(os)
+      ImageIO.write(image, "png", os64)
+      os.toString("UTF-8")
     }
   }
 

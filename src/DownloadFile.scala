@@ -1,18 +1,16 @@
-package org.nlogo.extensions.web.prim
+package org.nlogo.extensions.web
 
 import java.io.{ BufferedInputStream, File }
 import java.net.URL
 
 import org.nlogo.api.{ Argument, Command, Context, ExtensionException }
 import org.nlogo.core.Syntax.{ commandSyntax, ListType, StringType }
-import org.nlogo.extensions.web.requester.SimpleRequesterGenerator
+import org.nlogo.extensions.web.requester.{ Requester, SimpleWebIntegration }
 import org.nlogo.extensions.web.requester.http.RequestMethod
-import org.nlogo.extensions.web.util.{ FileWriter, using }
 
 object DownloadFile extends WebPrimitive with Command {
 
-  override def getSyntax =
-    commandSyntax(List(StringType, StringType))
+  override def getSyntax = commandSyntax(List(StringType, StringType))
 
   override def perform(args: Array[Argument], context: Context): Unit = carefully {
     val dest     = args(0).getString
@@ -25,10 +23,9 @@ object DownloadFile extends WebPrimitive with Command {
 
 }
 
-object DownloadFileFine extends WebPrimitive with Command with SimpleRequesterGenerator {
+object DownloadFileFine extends WebPrimitive with Command {
 
-  override def getSyntax =
-    commandSyntax(List(StringType, StringType, ListType, StringType))
+  override def getSyntax = commandSyntax(List(StringType, StringType, ListType, StringType))
 
   override def perform(args: Array[Argument], context: Context): Unit = carefully {
 
@@ -38,7 +35,7 @@ object DownloadFileFine extends WebPrimitive with Command with SimpleRequesterGe
     val filepath  = args(3).getString
     val filename  = new File(filepath).getName
 
-    processResponse(generateRequester(())(dest, reqMethod, paramMap)) {
+    processResponse((new Requester with SimpleWebIntegration)(dest, reqMethod, paramMap)) {
       case (response, _) => FileWriter(response, filepath, filename)
     }
 

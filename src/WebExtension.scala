@@ -2,8 +2,6 @@ package org.nlogo.extensions.web
 
 import org.nlogo.api.{ DefaultClassManager, PrimitiveManager }
 
-import prim._
-
 class WebExtension extends DefaultClassManager {
   override def load(primitiveManager: PrimitiveManager): Unit = {
     primitiveManager.addPrimitive("download-file",       DownloadFile)

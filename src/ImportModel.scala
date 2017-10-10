@@ -1,17 +1,17 @@
-package org.nlogo.extensions.web.prim
+package org.nlogo.extensions.web
 
 import java.io.{ BufferedInputStream, File }
 import java.net.URL
 
+import javax.swing.SwingUtilities
+
 import org.nlogo.api.{ Argument, Command, Context, ExtensionException, ModelType }
 import org.nlogo.app.App
 import org.nlogo.core.Syntax.{ commandSyntax, StringType }
-import org.nlogo.extensions.web.util.{ FileWriter, doLater, using }
 
 object ImportModel extends WebPrimitive with Command {
 
-  override def getSyntax =
-    commandSyntax(List(StringType))
+  override def getSyntax = commandSyntax(List(StringType))
 
   override def perform(args: Array[Argument], context: Context): Unit = carefully {
     val dest = args(0).getString
@@ -38,6 +38,12 @@ object ImportModel extends WebPrimitive with Command {
           destFile.delete()
         FileWriter(closeable, localPath)
     }
+  }
+
+  private def doLater(body: => Unit): Unit = {
+    SwingUtilities.invokeLater(new Runnable() {
+      override def run(): Unit = { body }
+    })
   }
 
 }

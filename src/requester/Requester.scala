@@ -10,18 +10,18 @@ trait Requester {
 
   private val isWebStart = System.getProperty("javawebstart.version", null) != null
 
-  private val DestinationPropKey = (if (isWebStart) "jnlp." else "") + "netlogo.export_destination"
-  private val CookiePropKey      = (if (isWebStart) "jnlp." else "") + "netlogo.web.cookie"
+  private val DestinationPropKey = s"${if (isWebStart) "jnlp." else ""}netlogo.export_destination"
+  private val CookiePropKey      = s"${if (isWebStart) "jnlp." else ""}netlogo.web.cookie"
 
   protected def generateAddedExportData: Option[InputStream] = None
 
   protected def exportKey = "data"
 
   def apply(dest: String, httpMethod: RequestMethod, params: Map[String, String]): (InputStream, String) = {
-    val rawParams   = sink(Map() ++ (generateAddedExportData map (is => Map(exportKey -> Option(constructData(is)))) getOrElse Map()))
+    val rawParams   = sink(Map() ++ (generateAddedExportData.map(is => Map(exportKey -> Option(constructData(is)))).getOrElse(Map())))
     val strParams   = params ++ sink(kvAdditionsMap)
     val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))
-    val destination = destOpt getOrElse(throw new IllegalStateException("No valid destination given!"))
+    val destination = destOpt.getOrElse(throw new IllegalStateException("No valid destination given!"))
     RequestSender(destination, httpMethod, strParams, rawParams, Option(System.getProperty(CookiePropKey)))
   }
 

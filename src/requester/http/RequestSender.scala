@@ -34,7 +34,7 @@ object RequestSender {
     request.handleParams(paramMap, encoding, lazyMap)
 
     // Many, many "official" cookie-insertion approaches were tried; all failed --JAB (9/5/12)
-    cookieValue foreach (cookie => request.setHeader("COOKIE", "JSESSIONID=" + cookie))
+    cookieValue.foreach(cookie => request.setHeader("COOKIE", s"JSESSIONID=$cookie"))
 
     try {
       val (responseStream, statusCode) = prepareResponse(generateClient.execute(request))

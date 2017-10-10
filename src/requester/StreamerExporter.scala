@@ -4,8 +4,6 @@ import java.io.{ ByteArrayInputStream, ByteArrayOutputStream, InputStream, Outpu
 
 import org.nlogo.api.Workspace
 
-import org.nlogo.extensions.web.util.nlEvaluate
-
 class StreamerExporter(hook: (OutputStream) => Unit, workspace: Workspace) extends Requester {
 
   self: WebIntegration with OutStream =>
@@ -15,7 +13,7 @@ class StreamerExporter(hook: (OutputStream) => Unit, workspace: Workspace) exten
     val outputStream = new ByteArrayOutputStream()
 
     try {
-      nlEvaluate(workspace)(convertStream(outputStream))(hook)
+      NLEvaluator(workspace)(convertStream(outputStream))(hook)
       Option(new ByteArrayInputStream(outputStream.toByteArray))
     } catch {
       case ex: UnsupportedEncodingException =>
