@@ -8,10 +8,30 @@ import javax.imageio.ImageIO
 
 import org.apache.commons.codec.binary.Base64OutputStream
 
-import org.nlogo.api.{ Context, ExtensionException, Workspace }
+import org.nlogo.api.{ Argument, Context, ExtensionException, Reporter, Workspace }
 import org.nlogo.app.{ App, ModelSaver }
 import org.nlogo.awt.Images
+import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
 import org.nlogo.fileformat.basicLoader
+
+object ExportInterface extends ExportingPrim(     Exporter.exportInterface)
+object ExportModel     extends ExportingPrim(_ => Exporter.exportModel)
+object ExportView      extends ExportingPrim(     Exporter.exportView)
+object ExportWorld     extends ExportingPrim(     Exporter.exportWorld)
+
+class ExportingPrim(export: (Context) => ByteArrayInputStream) extends WebPrimitive with Reporter {
+
+  override def getSyntax = reporterSyntax(right = List(StringType, StringType, ListType), ret = ListType)
+
+  override def report(args: Array[Argument], context: Context): AnyRef = carefully {
+    val dest      = args(0).getString
+    val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
+    val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
+    val streamMap = Map("data" -> export(context))
+    responseToLogoList(mkRequest(dest, reqMethod, paramMap, streamMap))
+  }
+
+}
 
 object Exporter {
 
