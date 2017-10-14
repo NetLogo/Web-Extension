@@ -3,7 +3,7 @@ package org.nlogo.extensions.web
 import java.net.URL
 
 import org.nlogo.api.{ Argument, Command, Context, ExtensionException, Workspace }
-import org.nlogo.core.Syntax.{ commandSyntax, StringType }
+import org.nlogo.core.Syntax.{ commandSyntax, ListType, StringType }
 import org.nlogo.nvm.ExtensionContext
 import org.nlogo.window.GUIWorkspace
 
@@ -24,7 +24,7 @@ object ImportDrawing extends WebPrimitive with Command {
 
 object ImportDrawingFine extends WebPrimitive with Command {
 
-  override def getSyntax = commandSyntax(List(StringType))
+  override def getSyntax = commandSyntax(List(StringType, StringType, ListType))
 
   override def perform(args: Array[Argument], context: Context): Unit = carefully {
     EnsuranceAgent.ensuringGUIWorkspace(context.workspace) { (guiWS: GUIWorkspace) =>

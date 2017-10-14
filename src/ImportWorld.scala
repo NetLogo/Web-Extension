@@ -6,7 +6,7 @@ import java.util.zip.GZIPInputStream
 import scala.io.{ Codec, Source }
 
 import org.nlogo.api.{ Argument, Command, Context, ExtensionException }
-import org.nlogo.core.Syntax.{ commandSyntax, StringType }
+import org.nlogo.core.Syntax.{ commandSyntax, ListType, StringType }
 import org.nlogo.nvm.ExtensionContext
 
 object ImportWorld extends WebPrimitive with Command {
@@ -32,7 +32,7 @@ object ImportWorld extends WebPrimitive with Command {
 
 object ImportWorldFine extends WebPrimitive with Command {
 
-  override def getSyntax = commandSyntax(List(StringType))
+  override def getSyntax = commandSyntax(List(StringType, StringType, ListType))
 
   override def perform(args: Array[Argument], context: Context): Unit = {
 
