@@ -86,7 +86,8 @@ object Exporter {
     val os   = new ByteArrayOutputStream()
     val os64 = new Base64OutputStream(os)
     ImageIO.write(image, "png", os64)
-    os.toString("UTF-8")
+    val b64  = os.toString("UTF-8")
+    s"data:image/png;base64,$b64"
   }
 
 }
