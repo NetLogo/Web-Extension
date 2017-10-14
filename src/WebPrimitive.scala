@@ -15,42 +15,34 @@ trait WebPrimitive {
 
   self: Primitive =>
 
-  protected def paramify(arg: Argument): Option[Map[String, String]] = Try(arg.getList).toOption.map {
-    list: LogoList =>
+  protected def paramify(arg: Argument): Option[Map[String, String]] =
+    Try(arg.getList).toOption.map {
+      list: LogoList =>
 
-      def innerListToKV(l: LogoList) =
-        try {
-          l.toVector.toList map (_.toString) match {
-            case a :: b :: Nil => (a, b)
-            case _             => throw new ExtensionException("Improperly-sized key-value tuple.")
+        def innerListToKV(l: LogoList) =
+          try {
+            l.toVector.toList map (_.toString) match {
+              case a :: b :: Nil => (a, b)
+              case _             => throw new ExtensionException("Improperly-sized key-value tuple.")
+            }
+          } catch {
+            case ex: Exception => throw new ExtensionException("Malformed key-value pairs.", ex)
           }
-        } catch {
-          case ex: Exception => throw new ExtensionException("Malformed key-value pairs.", ex)
+
+        list.foldLeft(Map[String, String]()) {
+          case (acc, x) =>
+            val (key, value) = innerListToKV(x.asInstanceOf[LogoList])
+            acc + (key -> value)
         }
 
-      list.foldLeft(Map[String, String]()) {
-        case (acc, x) =>
-          val (key, value) = innerListToKV(x.asInstanceOf[LogoList])
-          acc + (key -> value)
-      }
-
-  }
-
-  protected def httpMethodify(arg: Argument): Option[RequestMethod] = {
-    try RequestMethod(arg.getString)
-    catch {
-      case ex: Exception =>
-        System.err.println("Failed to get HTTP method from argument.\n\n" + ex.getMessage)
-        None
     }
-  }
+
+  protected def httpMethodify(arg: Argument): Option[RequestMethod] =
+    Try(arg.getString).toOption.flatMap(RequestMethod.apply)
 
   protected def processResponse[T](responseTuple: (InputStream, String))(f: (InputStream, String) => T): T = {
     val (response, statusCode) = responseTuple
-    try
-      f(response, statusCode)
-    finally
-      response.close()
+    using(response)(resp => f(resp, statusCode))
   }
 
   protected def responseToLogoList(responseTuple: (InputStream, String)): LogoList =
