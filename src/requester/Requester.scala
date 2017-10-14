@@ -13,19 +13,14 @@ trait Requester {
   private val DestinationPropKey = s"${if (isWebStart) "jnlp." else ""}netlogo.export_destination"
   private val CookiePropKey      = s"${if (isWebStart) "jnlp." else ""}netlogo.web.cookie"
 
-  protected def generateAddedExportData: Option[InputStream] = None
-
-  protected def exportKey = "data"
+  protected def streamMap: Map[String, InputStream] = Map.empty
 
   def apply(dest: String, httpMethod: RequestMethod, params: Map[String, String]): (InputStream, String) = {
-    val rawParams   = sink(Map() ++ (generateAddedExportData.map(is => Map(exportKey -> Option(constructData(is)))).getOrElse(Map())))
-    val strParams   = params ++ sink(kvAdditionsMap)
-    val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))
-    val destination = destOpt.getOrElse(throw new IllegalStateException("No valid destination given!"))
-    RequestSender(destination, httpMethod, strParams, rawParams, Option(System.getProperty(CookiePropKey)))
+    val streamParams = streamMap.mapValues(constructData)
+    val strParams    = params ++ kvAdditionsMap
+    val destOpt      = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))
+    val destination  = destOpt.getOrElse(throw new IllegalStateException("No valid destination given!"))
+    RequestSender(destination, httpMethod, strParams, streamParams, Option(System.getProperty(CookiePropKey)))
   }
-
-  private def sink[T, U](map: Map[T, Option[U]]): Map[T, U] =
-    map.collect { case (k, Some(v)) => (k, v) }
 
 }

@@ -18,7 +18,8 @@ object UploadFile extends WebPrimitive with Reporter {
     val filePath  = args(3).getString
     val exporter  =
       new Requester with SimpleWebIntegration {
-        override protected def generateAddedExportData = Some(new FileInputStream(filePath))
+        override protected def streamMap =
+          Map("data" -> new FileInputStream(filePath))
       }
     responseToLogoList(exporter(dest, reqMethod, paramMap))
   }

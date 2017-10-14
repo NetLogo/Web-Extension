@@ -1,12 +1,9 @@
 package org.nlogo.extensions.web
 
-import java.io.{ OutputStream, PrintWriter }
-
-import org.nlogo.api.{ Argument, Context, ExtensionException, Reporter, Workspace }
+import org.nlogo.api.{ Argument, Context, ExtensionException, Reporter }
 import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
-import org.nlogo.nvm.ExtensionContext
 
-import org.nlogo.extensions.web.requester.{ GZIPStream, SimpleWebIntegration, StreamerExporter }
+import org.nlogo.extensions.web.requester.{ Requester, SimpleWebIntegration }
 
 object ExportWorld extends WebPrimitive with Reporter {
 
@@ -16,15 +13,11 @@ object ExportWorld extends WebPrimitive with Reporter {
     val dest      = args(0).getString
     val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
     val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
-    val exporter  = {
-      val hook =
-        (stream: OutputStream) => {
-          val writer = new PrintWriter(stream)
-          try context.workspace.exportWorld(writer)
-          finally writer.close()
-        }
-      new StreamerExporter(hook, context.workspace) with SimpleWebIntegration with GZIPStream
-    }
+    val exporter  =
+      new Requester with SimpleWebIntegration {
+        override protected def streamMap =
+          Map("data" -> Exporter.exportWorld(context))
+      }
     responseToLogoList(exporter(dest, reqMethod, paramMap))
   }
 

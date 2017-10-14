@@ -1,7 +1,5 @@
 package org.nlogo.extensions.web
 
-import java.io.{ ByteArrayInputStream, InputStream }
-
 import org.nlogo.api.{ Argument, Context, ExtensionException, Reporter }
 import org.nlogo.core.Syntax.{ ListType, reporterSyntax, StringType }
 import org.nlogo.nvm.ExtensionContext
@@ -18,7 +16,8 @@ object ExportView extends WebPrimitive with Reporter {
     val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
     val exporter  =
       new Requester with SimpleWebIntegration {
-        override protected def generateAddedExportData = Some(new ByteArrayInputStream(AsBase64(context.workspace.exportView).getBytes))
+        override protected def streamMap =
+          Map("data" -> Exporter.exportView(context))
       }
     responseToLogoList(exporter(dest, reqMethod, paramMap))
   }
