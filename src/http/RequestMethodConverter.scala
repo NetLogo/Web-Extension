@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web.requester.http
+package org.nlogo.extensions.web.http
 
 import java.io.InputStream
 import java.net.{ URI, URLEncoder }

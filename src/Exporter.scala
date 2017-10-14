@@ -13,8 +13,6 @@ import org.nlogo.app.{ App, ModelSaver }
 import org.nlogo.awt.Images
 import org.nlogo.fileformat.basicLoader
 
-import org.nlogo.extensions.web.requester.NLEvaluator
-
 object Exporter {
 
   def exportInterface(context: Context): ByteArrayInputStream =

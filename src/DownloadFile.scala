@@ -5,8 +5,8 @@ import java.net.URL
 
 import org.nlogo.api.{ Argument, Command, Context, ExtensionException }
 import org.nlogo.core.Syntax.{ commandSyntax, ListType, StringType }
-import org.nlogo.extensions.web.requester.{ Requester, SimpleWebIntegration }
-import org.nlogo.extensions.web.requester.http.RequestMethod
+
+import org.nlogo.extensions.web.http.RequestMethod
 
 object DownloadFile extends WebPrimitive with Command {
 
@@ -35,7 +35,7 @@ object DownloadFileFine extends WebPrimitive with Command {
     val filepath  = args(3).getString
     val filename  = new File(filepath).getName
 
-    processResponse((new Requester with SimpleWebIntegration)(dest, reqMethod, paramMap)) {
+    processResponse(mkRequest(dest, reqMethod, paramMap, Map.empty)) {
       case (response, _) => FileWriter(response, filepath, filename)
     }
 

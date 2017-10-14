@@ -7,8 +7,6 @@ import org.nlogo.core.Syntax.{ commandSyntax, StringType }
 import org.nlogo.nvm.ExtensionContext
 import org.nlogo.window.GUIWorkspace
 
-import org.nlogo.extensions.web.requester.{ Requester, SimpleWebIntegration }
-
 object ImportDrawing extends WebPrimitive with Command {
 
   override def getSyntax = commandSyntax(List(StringType))
@@ -33,7 +31,7 @@ object ImportDrawingFine extends WebPrimitive with Command {
       val dest      = args(0).getString
       val reqMethod = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
       val paramMap  = paramify     (args(2)).getOrElse(Map.empty)
-      processResponse((new Requester with SimpleWebIntegration)(dest, reqMethod, paramMap)) {
+      processResponse(mkRequest(dest, reqMethod, paramMap, Map.empty)) {
         case (response, _) => guiWS.importDrawing(response)
       }
     }

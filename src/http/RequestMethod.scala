@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web.requester.http
+package org.nlogo.extensions.web.http
 
 sealed trait RequestMethod
 

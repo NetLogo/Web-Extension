@@ -8,7 +8,8 @@ import scala.util.Try
 import org.nlogo.api.{ Argument, Command, Reporter, Context, ExtensionException }
 import org.nlogo.core.{ LogoList, Primitive }
 import org.nlogo.core.Syntax.{ ListType, StringType }
-import org.nlogo.extensions.web.requester.http.RequestMethod
+
+import org.nlogo.extensions.web.http.{ RequestMethod, RequestSender }
 
 trait WebPrimitive {
 
@@ -66,5 +67,21 @@ trait WebPrimitive {
 
   protected def using[A <: { def close() }, B](stream: A)(f: A => B): B =
     try { f(stream) } finally { stream.close() }
+
+  protected def mkRequest(dest:         String
+                        , httpMethod:   RequestMethod
+                        , params:       Map[String, String]
+                        , streamParams: Map[String, InputStream]): (InputStream, String) = {
+
+    val isWebStart         = System.getProperty("javawebstart.version", null) != null
+    val DestinationPropKey = s"${if (isWebStart) "jnlp." else ""}netlogo.export_destination"
+    val CookiePropKey      = s"${if (isWebStart) "jnlp." else ""}netlogo.web.cookie"
+
+    val destOpt     = Option(if (!dest.isEmpty) dest else System.getProperty(DestinationPropKey))
+    val destination = destOpt.getOrElse(throw new IllegalStateException("No valid destination given!"))
+
+    RequestSender(destination, httpMethod, params, streamParams, Option(System.getProperty(CookiePropKey)))
+
+  }
 
 }

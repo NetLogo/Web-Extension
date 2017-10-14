@@ -1,4 +1,4 @@
-package org.nlogo.extensions.web.requester
+package org.nlogo.extensions.web
 
 import org.nlogo.api.{ ReporterRunnable, Workspace }
 

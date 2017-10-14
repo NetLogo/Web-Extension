@@ -9,8 +9,6 @@ import org.nlogo.api.{ Argument, Command, Context, ExtensionException }
 import org.nlogo.core.Syntax.{ commandSyntax, StringType }
 import org.nlogo.nvm.ExtensionContext
 
-import org.nlogo.extensions.web.requester.{ NLEvaluator, Requester, SimpleWebIntegration }
-
 object ImportWorld extends WebPrimitive with Command {
 
   override def getSyntax = commandSyntax(List(StringType))
@@ -41,7 +39,7 @@ object ImportWorldFine extends WebPrimitive with Command {
     val dest          = args(0).getString
     val reqMethod     = httpMethodify(args(1)).getOrElse(throw new ExtensionException("Invalid HTTP method name supplied."))
     val paramMap      = paramify     (args(2)).getOrElse(Map.empty)
-    val (response, _) = (new Requester with SimpleWebIntegration)(dest, reqMethod, paramMap)
+    val (response, _) = mkRequest(dest, reqMethod, paramMap, Map.empty)
 
     NLEvaluator(context.workspace)(response) {
       (stream: InputStream) =>
