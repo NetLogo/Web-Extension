@@ -6,7 +6,7 @@ netLogoClassManager := "org.nlogo.extensions.web.WebExtension"
 
 netLogoVersion := "6.0.4-9328ba6"
 
-scalaVersion := "2.12.2"
+scalaVersion := "2.12.8"
 
 version := "2.0.0"
 
