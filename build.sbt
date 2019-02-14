@@ -4,7 +4,7 @@ name := "web"
 
 netLogoClassManager := "org.nlogo.extensions.web.WebExtension"
 
-netLogoVersion := "6.0.2"
+netLogoVersion := "6.0.4-9328ba6"
 
 scalaVersion := "2.12.2"
 
@@ -21,4 +21,3 @@ libraryDependencies ++= Seq(
   "org.picocontainer" % "picocontainer" % "2.13.6",
   "log4j" % "log4j" % "1.2.17"
 )
-
