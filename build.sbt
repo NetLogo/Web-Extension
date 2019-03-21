@@ -4,15 +4,15 @@ name := "web"
 
 netLogoClassManager := "org.nlogo.extensions.web.WebExtension"
 
-netLogoVersion := "6.0.4-9328ba6"
+netLogoVersion := "6.1.0-RC1"
 
 scalaVersion := "2.12.8"
 
-version := "2.0.0"
+version := "2.1.0"
 
 scalaSource in Compile := baseDirectory.value / "src"
 
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", 
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature",
                       "-encoding", "us-ascii", "-language:_")
 
 libraryDependencies ++= Seq(
