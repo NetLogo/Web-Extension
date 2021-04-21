@@ -2,9 +2,10 @@ enablePlugins(org.nlogo.build.NetLogoExtension)
 
 name := "web"
 
-netLogoClassManager := "org.nlogo.extensions.web.WebExtension"
+resolvers      += "netlogo" at "https://dl.cloudsmith.io/public/netlogo/netlogo/maven/"
+netLogoVersion := "6.2.0-d27b502"
 
-netLogoVersion := "6.1.0-RC1"
+netLogoClassManager := "org.nlogo.extensions.web.WebExtension"
 
 scalaVersion := "2.12.8"
 
