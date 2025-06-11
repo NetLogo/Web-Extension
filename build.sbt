@@ -1,7 +1,7 @@
 enablePlugins(org.nlogo.build.NetLogoExtension)
 
 name       := "web"
-version    := "2.1.0"
+version    := "2.1.1"
 isSnapshot := true
 
 scalaVersion           := "3.7.0"
