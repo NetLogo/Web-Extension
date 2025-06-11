@@ -1,5 +1,6 @@
 *.jar.pack.gz
 *.jar
+/.bundledFiles
 /classes
 .DS_Store
 target/
