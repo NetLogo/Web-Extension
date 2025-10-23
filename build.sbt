@@ -1,13 +1,16 @@
-enablePlugins(org.nlogo.build.NetLogoExtension)
+import org.nlogo.build.NetLogoExtension
+
+enablePlugins(NetLogoExtension)
 
 name       := "web"
-version    := "2.1.1"
+version    := "2.1.2"
 isSnapshot := true
 
 scalaVersion           := "3.7.0"
 Compile / scalaSource  := baseDirectory.value / "src" / "main"
 Test / scalaSource     := baseDirectory.value / "src" / "test"
-scalacOptions          ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-encoding", "us-ascii", "-release", "17")
+scalacOptions          ++= Seq("-deprecation", "-unchecked", "-Xfatal-warnings", "-encoding", "us-ascii",
+                               "-release", "17", "-Wunused:linted")
 
 libraryDependencies ++= Seq(
   "org.apache.httpcomponents" % "httpclient" % "4.2",
@@ -18,4 +21,4 @@ libraryDependencies ++= Seq(
 
 netLogoExtName      := "web"
 netLogoClassManager := "org.nlogo.extensions.web.WebExtension"
-netLogoVersion      := "7.0.0-beta1"
+netLogoVersion      := "7.0.1"
